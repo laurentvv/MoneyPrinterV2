@@ -13,93 +13,93 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 class AffiliateMarketing:
     """
-    This class will be used to handle all the affiliate marketing related operations.    
+    Cette classe sera utilisée pour gérer toutes les opérations liées au marketing d'affiliation.
     """
     def __init__(self, affiliate_link: str, fp_profile_path: str, twitter_account_uuid: str, account_nickname: str, topic: str) -> None:
         """
-        Initializes the Affiliate Marketing class.
+        Initialise la classe Affiliate Marketing.
 
         Args:
-            affiliate_link (str): The affiliate link
-            fp_profile_path (str): The path to the Firefox profile
-            twitter_account_uuid (str): The Twitter account UUID
-            account_nickname (str): The account nickname
-            topic (str): The topic of the product
+            affiliate_link (str): Le lien d'affiliation
+            fp_profile_path (str): Le chemin vers le profil Firefox
+            twitter_account_uuid (str): L'UUID du compte Twitter
+            account_nickname (str): Le surnom du compte
+            topic (str): Le sujet du produit
 
         Returns:
             None
         """
         self._fp_profile_path: str = fp_profile_path
 
-        # Initialize the Firefox profile
+        # Initialiser le profil Firefox
         self.options: Options = Options()
 
-        # Set headless state of browser
+        # Définir l'état headless du navigateur
         if get_headless():
             self.options.add_argument("--headless")
 
-        # Set the profile path
+        # Définir le chemin du profil
         self.options.add_argument("-profile")
         self.options.add_argument(fp_profile_path)
         
-        # Set the service
+        # Définir le service
         self.service: Service = Service(GeckoDriverManager().install())
 
-        # Initialize the browser
+        # Initialiser le navigateur
         self.browser: webdriver.Firefox = webdriver.Firefox(service=self.service, options=self.options)
 
-        # Set the affiliate link
+        # Définir le lien d'affiliation
         self.affiliate_link: str = affiliate_link
 
-        # Set the Twitter account UUID
+        # Définir l'UUID du compte Twitter
         self.account_uuid: str = twitter_account_uuid
 
-        # Set the Twitter account nickname
+        # Définir le surnom du compte Twitter
         self.account_nickname: str = account_nickname
 
-        # Set the Twitter topic
+        # Définir le sujet Twitter
         self.topic: str = topic
 
-        # Scrape the product information
+        # Scraper les informations sur le produit
         self.scrape_product_information()
 
     def scrape_product_information(self) -> None:
         """
-        This method will be used to scrape the product
-        information from the affiliate link.
+        Cette méthode sera utilisée pour scraper les informations sur le produit
+        à partir du lien d'affiliation.
         """
-        # Open the affiliate link
+        # Ouvrir le lien d'affiliation
         self.browser.get(self.affiliate_link)
 
-        # Get the product name
+        # Obtenir le nom du produit
         product_title: str = self.browser.find_element(By.ID, AMAZON_PRODUCT_TITLE_ID).text
         
-        # Get the features of the product
+        # Obtenir les caractéristiques du produit
         features: any = self.browser.find_elements(By.ID, AMAZON_FEATURE_BULLETS_ID)
 
         if get_verbose():
-            info(f"Product Title: {product_title}")
+            info(f"Titre du produit: {product_title}")
 
         if get_verbose():
-            info(f"Features: {features}")
+            info(f"Caractéristiques: {features}")
             
-        # Set the product title
+        # Définir le titre du produit
         self.product_title: str = product_title
 
-        # Set the features
+        # Définir les caractéristiques
         self.features: any = features
 
     def generate_response(self, prompt: str) -> str:
         """
-        This method will be used to generate the response for the user.
+        Cette méthode sera utilisée pour générer la réponse pour l'utilisateur.
 
         Args:
-            prompt (str): The prompt for the user.
+            prompt (str): Le prompt pour l'utilisateur.
 
         Returns:
-            response (str): The response for the user.
+            response (str): La réponse pour l'utilisateur.
         """
-        # Generate the response
+        # Générer la réponse
         response: str = g4f.ChatCompletion.create(
             model=parse_model(get_model()),
             messages=[
@@ -110,41 +110,41 @@ class AffiliateMarketing:
             ]
         )
 
-        # Return the response
+        # Retourner la réponse
         return response
 
     def generate_pitch(self) -> str:
         """
-        This method will be used to generate a pitch for the product.
+        Cette méthode sera utilisée pour générer un argumentaire pour le produit.
 
         Returns:
-            pitch (str): The pitch for the product.
+            pitch (str): L'argumentaire pour le produit.
         """
-        # Generate the response
-        pitch: str = self.generate_response(f"I want to promote this product on my website. Generate a brief pitch about this product, return nothing else except the pitch. Information:\nTitle: \"{self.product_title}\"\nFeatures: \"{str(self.features)}\"") + "\nYou can buy the product here: " + self.affiliate_link
+        # Générer la réponse
+        pitch: str = self.generate_response(f"Je veux promouvoir ce produit sur mon site web. Générez un bref argumentaire sur ce produit, ne retournez rien d'autre que l'argumentaire. Informations:\nTitre: \"{self.product_title}\"\nCaractéristiques: \"{str(self.features)}\"") + "\nVous pouvez acheter le produit ici: " + self.affiliate_link
 
         self.pitch: str = pitch
 
-        # Return the response
+        # Retourner la réponse
         return pitch
     
     def share_pitch(self, where: str) -> None:
         """
-        This method will be used to share the pitch on the specified platform.
+        Cette méthode sera utilisée pour partager l'argumentaire sur la plateforme spécifiée.
 
         Args:
-            where (str): The platform where the pitch will be shared.
+            where (str): La plateforme où l'argumentaire sera partagé.
         """
         if where == "twitter":
-            # Initialize the Twitter class
+            # Initialiser la classe Twitter
             twitter: Twitter = Twitter(self.account_uuid, self.account_nickname, self._fp_profile_path, self.topic)
 
-            # Share the pitch
+            # Partager l'argumentaire
             twitter.post(self.pitch)
 
     def quit(self) -> None:
         """
-        This method will be used to quit the browser.
+        Cette méthode sera utilisée pour quitter le navigateur.
         """
-        # Quit the browser
+        # Quitter le navigateur
         self.browser.quit()

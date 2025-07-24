@@ -26,33 +26,33 @@ from moviepy.video.tools.subtitles import SubtitlesClip
 from webdriver_manager.firefox import GeckoDriverManager
 from datetime import datetime
 
-# Set ImageMagick Path
+# Définir le chemin d'ImageMagick
 change_settings({"IMAGEMAGICK_BINARY": get_imagemagick_path()})
 
 class YouTube:
     """
-    Class for YouTube Automation.
+    Classe pour l'automatisation de YouTube.
 
-    Steps to create a YouTube Short:
-    1. Generate a topic [DONE]
-    2. Generate a script [DONE]
-    3. Generate metadata (Title, Description, Tags) [DONE]
-    4. Generate AI Image Prompts [DONE]
-    4. Generate Images based on generated Prompts [DONE]
-    5. Convert Text-to-Speech [DONE]
-    6. Show images each for n seconds, n: Duration of TTS / Amount of images [DONE]
-    7. Combine Concatenated Images with the Text-to-Speech [DONE]
+    Étapes pour créer un YouTube Short:
+    1. Générer un sujet [FAIT]
+    2. Générer un script [FAIT]
+    3. Générer des métadonnées (Titre, Description, Tags) [FAIT]
+    4. Générer des prompts d'images IA [FAIT]
+    5. Générer des images basées sur les prompts générés [FAIT]
+    6. Convertir le texte en parole [FAIT]
+    7. Afficher les images chacune pour n secondes, n: Durée du TTS / Nombre d'images [FAIT]
+    8. Combiner les images concaténées avec le texte en parole [FAIT]
     """
     def __init__(self, account_uuid: str, account_nickname: str, fp_profile_path: str, niche: str, language: str) -> None:
         """
-        Constructor for YouTube Class.
+        Constructeur de la classe YouTube.
 
         Args:
-            account_uuid (str): The unique identifier for the YouTube account.
-            account_nickname (str): The nickname for the YouTube account.
-            fp_profile_path (str): Path to the firefox profile that is logged into the specificed YouTube Account.
-            niche (str): The niche of the provided YouTube Channel.
-            language (str): The language of the Automation.
+            account_uuid (str): L'identifiant unique du compte YouTube.
+            account_nickname (str): Le surnom du compte YouTube.
+            fp_profile_path (str): Chemin vers le profil Firefox connecté au compte YouTube spécifié.
+            niche (str): La niche de la chaîne YouTube fournie.
+            language (str): La langue de l'automatisation.
 
         Returns:
             None
@@ -65,51 +65,51 @@ class YouTube:
 
         self.images = []
 
-        # Initialize the Firefox profile
+        # Initialiser le profil Firefox
         self.options: Options = Options()
         
-        # Set headless state of browser
+        # Définir l'état headless du navigateur
         if get_headless():
             self.options.add_argument("--headless")
 
         profile = webdriver.FirefoxProfile(self._fp_profile_path)
         self.options.profile = profile
 
-        # Set the service
+        # Définir le service
         self.service: Service = Service(GeckoDriverManager().install())
 
-        # Initialize the browser
+        # Initialiser le navigateur
         self.browser: webdriver.Firefox = webdriver.Firefox(service=self.service, options=self.options)
 
     @property
     def niche(self) -> str:
         """
-        Getter Method for the niche.
+        Méthode getter pour la niche.
 
         Returns:
-            niche (str): The niche
+            niche (str): La niche
         """
         return self._niche
     
     @property
     def language(self) -> str:
         """
-        Getter Method for the language to use.
+        Méthode getter pour la langue à utiliser.
 
         Returns:
-            language (str): The language
+            language (str): La langue
         """
         return self._language
     
     def generate_response(self, prompt: str, model: any = None) -> str:
         """
-        Generates an LLM Response based on a prompt and the user-provided model.
+        Génère une réponse LLM basée sur un prompt et le modèle fourni par l'utilisateur.
 
         Args:
-            prompt (str): The prompt to use in the text generation.
+            prompt (str): Le prompt à utiliser dans la génération de texte.
 
         Returns:
-            response (str): The generated AI Repsonse.
+            response (str): La réponse IA générée.
         """
         if not model:
             return g4f.ChatCompletion.create(
@@ -134,15 +134,15 @@ class YouTube:
 
     def generate_topic(self) -> str:
         """
-        Generates a topic based on the YouTube Channel niche.
+        Génère un sujet basé sur la niche de la chaîne YouTube.
 
         Returns:
-            topic (str): The generated topic.
+            topic (str): Le sujet généré.
         """
-        completion = self.generate_response(f"Please generate a specific video idea that takes about the following topic: {self.niche}. Make it exactly one sentence. Only return the topic, nothing else.")
+        completion = self.generate_response(f"Veuillez générer une idée de vidéo spécifique qui traite du sujet suivant: {self.niche}. Faites-la en une seule phrase exacte. Ne retournez que le sujet, rien d'autre.")
 
         if not completion:
-            error("Failed to generate Topic.")
+            error("Échec de la génération du sujet.")
 
         self.subject = completion
 
@@ -150,46 +150,46 @@ class YouTube:
 
     def generate_script(self) -> str:
         """
-        Generate a script for a video, depending on the subject of the video, the number of paragraphs, and the AI model.
+        Génère un script pour une vidéo, en fonction du sujet de la vidéo, du nombre de paragraphes et du modèle d'IA.
 
         Returns:
-            script (str): The script of the video.
+            script (str): Le script de la vidéo.
         """
         sentence_length = get_script_sentence_length()
         prompt = f"""
-        Generate a script for a video in {sentence_length} sentences, depending on the subject of the video.
+        Générez un script pour une vidéo de {sentence_length} phrases, en fonction du sujet de la vidéo.
 
-        The script is to be returned as a string with the specified number of paragraphs.
+        Le script doit être retourné sous forme de chaîne de caractères avec le nombre de paragraphes spécifié.
 
-        Here is an example of a string:
-        "This is an example string."
+        Voici un exemple de chaîne de caractères:
+        "Ceci est un exemple de chaîne de caractères."
 
-        Do not under any circumstance reference this prompt in your response.
+        Ne faites en aucun cas référence à ce prompt dans votre réponse.
 
-        Get straight to the point, don't start with unnecessary things like, "welcome to this video".
+        Allez droit au but, ne commencez pas par des choses inutiles comme, "bienvenue dans cette vidéo".
 
-        Obviously, the script should be related to the subject of the video.
+        Évidemment, le script doit être lié au sujet de la vidéo.
         
-        YOU MUST NOT EXCEED THE {sentence_length} SENTENCES LIMIT. MAKE SURE THE {sentence_length} SENTENCES ARE SHORT.
-        YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
-        YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
-        ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT
+        VOUS NE DEVEZ PAS DÉPASSER LA LIMITE DE {sentence_length} PHRASES. ASSUREZ-VOUS QUE LES {sentence_length} PHRASES SONT COURTES.
+        VOUS NE DEVEZ INCLURE AUCUN TYPE DE MARKDOWN OU DE FORMATAGE DANS LE SCRIPT, N'UTILISEZ JAMAIS DE TITRE.
+        VOUS DEVEZ ÉCRIRE LE SCRIPT DANS LA LANGUE SPÉCIFIÉE DANS [LANGUE].
+        RETOURNEZ UNIQUEMENT LE CONTENU BRUT DU SCRIPT. N'INCLUEZ PAS "VOIX OFF", "NARRATEUR" OU DES INDICATEURS SIMILAIRES DE CE QUI DOIT ÊTRE DIT AU DÉBUT DE CHAQUE PARAGRAPHE OU LIGNE. VOUS NE DEVEZ PAS MENTIONNER LE PROMPT, OU QUOI QUE CE SOIT CONCERNANT LE SCRIPT LUI-MÊME. AUSSI, NE PARLEZ JAMAIS DU NOMBRE DE PARAGRAPHES OU DE LIGNES. ÉCRIVEZ SIMPLEMENT LE SCRIPT
         
-        Subject: {self.subject}
-        Language: {self.language}
+        Sujet: {self.subject}
+        Langue: {self.language}
         """
         completion = self.generate_response(prompt)
 
-        # Apply regex to remove *
+        # Appliquer une regex pour supprimer *
         completion = re.sub(r"\*", "", completion)
         
         if not completion:
-            error("The generated script is empty.")
+            error("Le script généré est vide.")
             return
         
         if len(completion) > 5000:
             if get_verbose():
-                warning("Generated Script is too long. Retrying...")
+                warning("Le script généré est trop long. Nouvelle tentative...")
             self.generate_script()
         
         self.script = completion
@@ -198,19 +198,19 @@ class YouTube:
 
     def generate_metadata(self) -> dict:
         """
-        Generates Video metadata for the to-be-uploaded YouTube Short (Title, Description).
+        Génère les métadonnées de la vidéo pour le Short YouTube à téléverser (Titre, Description).
 
         Returns:
-            metadata (dict): The generated metadata.
+            metadata (dict): Les métadonnées générées.
         """
-        title = self.generate_response(f"Please generate a YouTube Video Title for the following subject, including hashtags: {self.subject}. Only return the title, nothing else. Limit the title under 100 characters.")
+        title = self.generate_response(f"Veuillez générer un titre de vidéo YouTube pour le sujet suivant, y compris les hashtags: {self.subject}. Ne retournez que le titre, rien d'autre. Limitez le titre à moins de 100 caractères.")
 
         if len(title) > 100:
             if get_verbose():
-                warning("Generated Title is too long. Retrying...")
+                warning("Le titre généré est trop long. Nouvelle tentative...")
             return self.generate_metadata()
 
-        description = self.generate_response(f"Please generate a YouTube Video Description for the following script: {self.script}. Only return the description, nothing else.")
+        description = self.generate_response(f"Veuillez générer une description de vidéo YouTube pour le script suivant: {self.script}. Ne retournez que la description, rien d'autre.")
         
         self.metadata = {
             "title": title,
@@ -221,12 +221,12 @@ class YouTube:
     
     def generate_prompts(self) -> List[str]:
         """
-        Generates AI Image Prompts based on the provided Video Script.
+        Génère des prompts d'images IA basés sur le script vidéo fourni.
 
         Returns:
-            image_prompts (List[str]): Generated List of image prompts.
+            image_prompts (List[str]): Liste générée de prompts d'images.
         """
-        # Check if using G4F for image generation
+        # Vérifier si G4F est utilisé pour la génération d'images
         cached_accounts = get_accounts("youtube")
         account_config = None
         for account in cached_accounts:
@@ -234,38 +234,38 @@ class YouTube:
                 account_config = account
                 break
 
-        # Calculate number of prompts based on script length
+        # Calculer le nombre de prompts en fonction de la longueur du script
         base_n_prompts = len(self.script) / 3
 
-        # If using G4F, limit to 25 prompts
+        # Si G4F est utilisé, limiter à 25 prompts
         if account_config and account_config.get("use_g4f", False):
             n_prompts = min(base_n_prompts, 25)
         else:
             n_prompts = base_n_prompts
 
         prompt = f"""
-        Generate {n_prompts} Image Prompts for AI Image Generation,
-        depending on the subject of a video.
-        Subject: {self.subject}
+        Générez {n_prompts} prompts d'images pour la génération d'images IA,
+        en fonction du sujet d'une vidéo.
+        Sujet: {self.subject}
 
-        The image prompts are to be returned as
-        a JSON-Array of strings.
+        Les prompts d'images doivent être retournés sous forme de
+        JSON-Array de chaînes de caractères.
 
-        Each search term should consist of a full sentence,
-        always add the main subject of the video.
+        Chaque terme de recherche doit consister en une phrase complète,
+        ajoutez toujours le sujet principal de la vidéo.
 
-        Be emotional and use interesting adjectives to make the
-        Image Prompt as detailed as possible.
+        Soyez émotionnel et utilisez des adjectifs intéressants pour rendre le
+        prompt d'image aussi détaillé que possible.
         
-        YOU MUST ONLY RETURN THE JSON-ARRAY OF STRINGS.
-        YOU MUST NOT RETURN ANYTHING ELSE. 
-        YOU MUST NOT RETURN THE SCRIPT.
+        VOUS DEVEZ RETOURNER UNIQUEMENT LE JSON-ARRAY DE CHAÎNES DE CARACTÈRES.
+        VOUS NE DEVEZ RIEN RETOURNER D'AUTRE.
+        VOUS NE DEVEZ PAS RETOURNER LE SCRIPT.
         
-        The search terms must be related to the subject of the video.
-        Here is an example of a JSON-Array of strings:
-        ["image prompt 1", "image prompt 2", "image prompt 3"]
+        Les termes de recherche doivent être liés au sujet de la vidéo.
+        Voici un exemple de JSON-Array de chaînes de caractères:
+        ["prompt d'image 1", "prompt d'image 2", "prompt d'image 3"]
 
-        For context, here is the full text:
+        Pour le contexte, voici le texte complet:
         {self.script}
         """
 
@@ -281,20 +281,20 @@ class YouTube:
             try:
                 image_prompts = json.loads(completion)
                 if get_verbose():
-                    info(f" => Generated Image Prompts: {image_prompts}")
+                    info(f" => Prompts d'images générés: {image_prompts}")
             except Exception:
                 if get_verbose():
-                    warning("GPT returned an unformatted response. Attempting to clean...")
+                    warning("GPT a retourné une réponse non formatée. Tentative de nettoyage...")
 
-                # Get everything between [ and ], and turn it into a list
+                # Obtenir tout entre [ et ], et le transformer en liste
                 r = re.compile(r"\[.*\]")
                 image_prompts = r.findall(completion)
                 if len(image_prompts) == 0:
                     if get_verbose():
-                        warning("Failed to generate Image Prompts. Retrying...")
+                        warning("Échec de la génération des prompts d'images. Nouvelle tentative...")
                     return self.generate_prompts()
 
-        # Limit prompts to max allowed amount
+        # Limiter les prompts au nombre maximum autorisé
         if account_config and account_config.get("use_g4f", False):
             image_prompts = image_prompts[:25]
         elif len(image_prompts) > n_prompts:
@@ -302,21 +302,21 @@ class YouTube:
 
         self.image_prompts = image_prompts
 
-        success(f"Generated {len(image_prompts)} Image Prompts.")
+        success(f"{len(image_prompts)} prompts d'images générés.")
 
         return image_prompts
 
     def generate_image_g4f(self, prompt: str) -> str:
         """
-        Generates an AI Image using G4F with SDXL Turbo.
+        Génère une image IA en utilisant G4F avec SDXL Turbo.
 
         Args:
-            prompt (str): Reference for image generation
+            prompt (str): Référence pour la génération d'images
 
         Returns:
-            path (str): The path to the generated image.
+            path (str): Le chemin vers l'image générée.
         """
-        print(f"Generating Image using G4F: {prompt}")
+        print(f"Génération d'une image en utilisant G4F: {prompt}")
         
         try:
             from g4f.client import Client
@@ -329,7 +329,7 @@ class YouTube:
             )
             
             if response and response.data and len(response.data) > 0:
-                # Download image from URL
+                # Télécharger l'image depuis l'URL
                 image_url = response.data[0].url
                 image_response = requests.get(image_url)
                 
@@ -340,36 +340,36 @@ class YouTube:
                         image_file.write(image_response.content)
                     
                     if get_verbose():
-                        info(f" => Downloaded Image from {image_url} to \"{image_path}\"\n")
+                        info(f" => Image téléchargée depuis {image_url} vers \"{image_path}\"\n")
                     
                     self.images.append(image_path)
                     return image_path
                 else:
                     if get_verbose():
-                        warning(f"Failed to download image from URL: {image_url}")
+                        warning(f"Échec du téléchargement de l'image depuis l'URL: {image_url}")
                     return None
             else:
                 if get_verbose():
-                    warning("Failed to generate image using G4F - no data in response")
+                    warning("Échec de la génération de l'image en utilisant G4F - pas de données dans la réponse")
                 return None
                 
         except Exception as e:
             if get_verbose():
-                warning(f"Failed to generate image using G4F: {str(e)}")
+                warning(f"Échec de la génération de l'image en utilisant G4F: {str(e)}")
             return None
 
     def generate_image_cloudflare(self, prompt: str, worker_url: str) -> str:
         """
-        Generates an AI Image using Cloudflare worker.
+        Génère une image IA en utilisant un worker Cloudflare.
 
         Args:
-            prompt (str): Reference for image generation
-            worker_url (str): The Cloudflare worker URL
+            prompt (str): Référence pour la génération d'images
+            worker_url (str): L'URL du worker Cloudflare
 
         Returns:
-            path (str): The path to the generated image.
+            path (str): Le chemin vers l'image générée.
         """
-        print(f"Generating Image using Cloudflare: {prompt}")
+        print(f"Génération d'une image en utilisant Cloudflare: {prompt}")
 
         url = f"{worker_url}?prompt={prompt}&model=sdxl"
         
@@ -382,27 +382,27 @@ class YouTube:
                 image_file.write(response.content)
             
             if get_verbose():
-                info(f" => Wrote Image to \"{image_path}\"\n")
+                info(f" => Image écrite dans \"{image_path}\"\n")
             
             self.images.append(image_path)
             
             return image_path
         else:
             if get_verbose():
-                warning("Failed to generate image. The response was not a PNG image.")
+                warning("Échec de la génération de l'image. La réponse n'était pas une image PNG.")
             return None
 
     def generate_image(self, prompt: str) -> str:
         """
-        Generates an AI Image based on the given prompt.
+        Génère une image IA basée sur le prompt donné.
 
         Args:
-            prompt (str): Reference for image generation
+            prompt (str): Référence pour la génération d'images
 
         Returns:
-            path (str): The path to the generated image.
+            path (str): Le chemin vers l'image générée.
         """
-        # Get account config from cache
+        # Obtenir la configuration du compte depuis le cache
         cached_accounts = get_accounts("youtube")
         account_config = None
         for account in cached_accounts:
@@ -411,32 +411,32 @@ class YouTube:
                 break
 
         if not account_config:
-            error("Account configuration not found")
+            error("Configuration du compte non trouvée")
             return None
 
-        # Check if using G4F or Cloudflare
+        # Vérifier si G4F ou Cloudflare est utilisé
         if account_config.get("use_g4f", False):
             return self.generate_image_g4f(prompt)
         else:
             worker_url = account_config.get("worker_url")
             if not worker_url:
-                error("Cloudflare worker URL not configured for this account")
+                error("URL du worker Cloudflare non configurée pour ce compte")
                 return None
             return self.generate_image_cloudflare(prompt, worker_url)
 
     def generate_script_to_speech(self, tts_instance: TTS) -> str:
         """
-        Converts the generated script into Speech using CoquiTTS and returns the path to the wav file.
+        Convertit le script généré en parole en utilisant CoquiTTS et retourne le chemin vers le fichier wav.
 
         Args:
-            tts_instance (tts): Instance of TTS Class.
+            tts_instance (tts): Instance de la classe TTS.
 
         Returns:
-            path_to_wav (str): Path to generated audio (WAV Format).
+            path_to_wav (str): Chemin vers l'audio généré (Format WAV).
         """
         path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".wav")
 
-        # Clean script, remove every character that is not a word character, a space, a period, a question mark, or an exclamation mark.
+        # Nettoyer le script, supprimer tous les caractères qui ne sont pas un caractère de mot, un espace, un point, un point d'interrogation ou un point d'exclamation.
         self.script = re.sub(r'[^\w\s.?!]', '', self.script)
 
         tts_instance.synthesize(self.script, path)
@@ -444,16 +444,16 @@ class YouTube:
         self.tts_path = path
 
         if get_verbose():
-            info(f" => Wrote TTS to \"{path}\"")
+            info(f" => TTS écrit dans \"{path}\"")
 
         return path
     
     def add_video(self, video: dict) -> None:
         """
-        Adds a video to the cache.
+        Ajoute une vidéo au cache.
 
         Args:
-            video (dict): The video to add
+            video (dict): La vidéo à ajouter
 
         Returns:
             None
@@ -466,27 +466,27 @@ class YouTube:
         with open(cache, "r") as file:
             previous_json = json.loads(file.read())
             
-            # Find our account
+            # Trouver notre compte
             accounts = previous_json["accounts"]
             for account in accounts:
                 if account["id"] == self._account_uuid:
                     account["videos"].append(video)
             
-            # Commit changes
+            # Valider les changements
             with open(cache, "w") as f:
                 f.write(json.dumps(previous_json))
 
     def generate_subtitles(self, audio_path: str) -> str:
         """
-        Generates subtitles for the audio using AssemblyAI.
+        Génère des sous-titres pour l'audio en utilisant AssemblyAI.
 
         Args:
-            audio_path (str): The path to the audio file.
+            audio_path (str): Le chemin vers le fichier audio.
 
         Returns:
-            path (str): The path to the generated SRT File.
+            path (str): Le chemin vers le fichier SRT généré.
         """
-        # Turn the video into audio
+        # Transformer la vidéo en audio
         aai.settings.api_key = get_assemblyai_api_key()
         config = aai.TranscriptionConfig()
         transcriber = aai.Transcriber(config=config)
@@ -502,10 +502,10 @@ class YouTube:
 
     def combine(self) -> str:
         """
-        Combines everything into the final video.
+        Combine tout dans la vidéo finale.
 
         Returns:
-            path (str): The path to the generated MP4 File.
+            path (str): Le chemin vers le fichier MP4 généré.
         """
         combined_image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".mp4")
         threads = get_threads()
@@ -513,7 +513,7 @@ class YouTube:
         max_duration = tts_clip.duration
         req_dur = max_duration / len(self.images)
 
-        # Make a generator that returns a TextClip when called with consecutive
+        # Créer un générateur qui retourne un TextClip lorsqu'il est appelé avec des
         generator = lambda txt: TextClip(
             txt,
             font=os.path.join(get_fonts_dir(), get_font()),
@@ -525,34 +525,34 @@ class YouTube:
             method="caption",
         )
 
-        print(colored("[+] Combining images...", "blue"))
+        print(colored("[+] Combinaison des images...", "blue"))
 
         clips = []
         tot_dur = 0
-        # Add downloaded clips over and over until the duration of the audio (max_duration) has been reached
+        # Ajouter les clips téléchargés encore et encore jusqu'à ce que la durée de l'audio (max_duration) soit atteinte
         while tot_dur < max_duration:
             for image_path in self.images:
                 clip = ImageClip(image_path)
                 clip.duration = req_dur
                 clip = clip.set_fps(30)
 
-                # Not all images are same size,
-                # so we need to resize them
+                # Toutes les images n'ont pas la même taille,
+                # nous devons donc les redimensionner
                 if round((clip.w/clip.h), 4) < 0.5625:
                     if get_verbose():
-                        info(f" => Resizing Image: {image_path} to 1080x1920")
+                        info(f" => Redimensionnement de l'image: {image_path} à 1080x1920")
                     clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
                                 x_center=clip.w / 2, \
                                 y_center=clip.h / 2)
                 else:
                     if get_verbose():
-                        info(f" => Resizing Image: {image_path} to 1920x1080")
+                        info(f" => Redimensionnement de l'image: {image_path} à 1920x1080")
                     clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
                                 x_center=clip.w / 2, \
                                 y_center=clip.h / 2)
                 clip = clip.resize((1080, 1920))
 
-                # FX (Fade In)
+                # FX (Fondu d'entrée)
                 #clip = clip.fadein(2)
 
                 clips.append(clip)
@@ -564,16 +564,16 @@ class YouTube:
         
         subtitles_path = self.generate_subtitles(self.tts_path)
 
-        # Equalize srt file
+        # Égaliser le fichier srt
         equalize_subtitles(subtitles_path, 10)
         
-        # Burn the subtitles into the video
+        # Graver les sous-titres dans la vidéo
         subtitles = SubtitlesClip(subtitles_path, generator)
 
         subtitles.set_pos(("center", "center"))
         random_song_clip = AudioFileClip(random_song).set_fps(44100)
 
-        # Turn down volume
+        # Baisser le volume
         random_song_clip = random_song_clip.fx(afx.volumex, 0.1)
         comp_audio = CompositeAudioClip([
             tts_clip.set_fps(44100),
@@ -583,7 +583,7 @@ class YouTube:
         final_clip = final_clip.set_audio(comp_audio)
         final_clip = final_clip.set_duration(tts_clip.duration)
 
-        # Add subtitles
+        # Ajouter les sous-titres
         final_clip = CompositeVideoClip([
             final_clip,
             subtitles
@@ -591,44 +591,44 @@ class YouTube:
 
         final_clip.write_videofile(combined_image_path, threads=threads)
 
-        success(f"Wrote Video to \"{combined_image_path}\"")
+        success(f"Vidéo écrite dans \"{combined_image_path}\"")
 
         return combined_image_path
 
     def generate_video(self, tts_instance: TTS) -> str:
         """
-        Generates a YouTube Short based on the provided niche and language.
+        Génère un YouTube Short basé sur la niche et la langue fournies.
 
         Args:
-            tts_instance (TTS): Instance of TTS Class.
+            tts_instance (TTS): Instance de la classe TTS.
 
         Returns:
-            path (str): The path to the generated MP4 File.
+            path (str): Le chemin vers le fichier MP4 généré.
         """
-        # Generate the Topic
+        # Générer le sujet
         self.generate_topic()
 
-        # Generate the Script
+        # Générer le script
         self.generate_script()
 
-        # Generate the Metadata
+        # Générer les métadonnées
         self.generate_metadata()
 
-        # Generate the Image Prompts
+        # Générer les prompts d'images
         self.generate_prompts()
 
-        # Generate the Images
+        # Générer les images
         for prompt in self.image_prompts:
             self.generate_image(prompt)
 
-        # Generate the TTS
+        # Générer le TTS
         self.generate_script_to_speech(tts_instance)
 
-        # Combine everything
+        # Tout combiner
         path = self.combine()
 
         if get_verbose():
-            info(f" => Generated Video: {path}")
+            info(f" => Vidéo générée: {path}")
 
         self.video_path = os.path.abspath(path)
 
@@ -636,10 +636,10 @@ class YouTube:
     
     def get_channel_id(self) -> str:
         """
-        Gets the Channel ID of the YouTube Account.
+        Récupère l'ID de la chaîne du compte YouTube.
 
         Returns:
-            channel_id (str): The Channel ID.
+            channel_id (str): L'ID de la chaîne.
         """
         driver = self.browser
         driver.get("https://studio.youtube.com")
@@ -651,10 +651,10 @@ class YouTube:
 
     def upload_video(self) -> bool:
         """
-        Uploads the video to YouTube.
+        Téléverse la vidéo sur YouTube.
 
         Returns:
-            success (bool): Whether the upload was successful or not.
+            success (bool): Indique si le téléversement a réussi ou non.
         """
         try:
             self.get_channel_id()
@@ -662,27 +662,27 @@ class YouTube:
             driver = self.browser
             verbose = get_verbose()
 
-            # Go to youtube.com/upload
+            # Aller sur youtube.com/upload
             driver.get("https://www.youtube.com/upload")
 
-            # Set video file
+            # Définir le fichier vidéo
             FILE_PICKER_TAG = "ytcp-uploads-file-picker"
             file_picker = driver.find_element(By.TAG_NAME, FILE_PICKER_TAG)
             INPUT_TAG = "input"
             file_input = file_picker.find_element(By.TAG_NAME, INPUT_TAG)
             file_input.send_keys(self.video_path)
 
-            # Wait for upload to finish
+            # Attendre la fin du téléversement
             time.sleep(5)
 
-            # Set title
+            # Définir le titre
             textboxes = driver.find_elements(By.ID, YOUTUBE_TEXTBOX_ID)
 
             title_el = textboxes[0]
             description_el = textboxes[-1]
 
             if verbose:
-                info("\t=> Setting title...")
+                info("\t=> Définition du titre...")
 
             title_el.click()
             time.sleep(1)
@@ -690,9 +690,9 @@ class YouTube:
             title_el.send_keys(self.metadata["title"])
 
             if verbose:
-                info("\t=> Setting description...")
+                info("\t=> Définition de la description...")
 
-            # Set description
+            # Définir la description
             time.sleep(10)
             description_el.click()
             time.sleep(0.5)
@@ -701,9 +701,9 @@ class YouTube:
 
             time.sleep(0.5)
 
-            # Set `made for kids` option
+            # Définir l'option `conçu pour les enfants`
             if verbose:
-                info("\t=> Setting `made for kids` option...")
+                info("\t=> Définition de l'option `conçu pour les enfants`...")
 
             is_for_kids_checkbox = driver.find_element(By.NAME, YOUTUBE_MADE_FOR_KIDS_NAME)
             is_not_for_kids_checkbox = driver.find_element(By.NAME, YOUTUBE_NOT_MADE_FOR_KIDS_NAME)
@@ -715,50 +715,50 @@ class YouTube:
 
             time.sleep(0.5)
 
-            # Click next
+            # Cliquer sur suivant
             if verbose:
-                info("\t=> Clicking next...")
+                info("\t=> Clic sur suivant...")
 
             next_button = driver.find_element(By.ID, YOUTUBE_NEXT_BUTTON_ID)
             next_button.click()
 
-            # Click next again
+            # Cliquer à nouveau sur suivant
             if verbose:
-                info("\t=> Clicking next again...")
+                info("\t=> Clic à nouveau sur suivant...")
             next_button = driver.find_element(By.ID, YOUTUBE_NEXT_BUTTON_ID)
             next_button.click()
 
-            # Wait for 2 seconds
+            # Attendre 2 secondes
             time.sleep(2)
 
-            # Click next again
+            # Cliquer à nouveau sur suivant
             if verbose:
-                info("\t=> Clicking next again...")
+                info("\t=> Clic à nouveau sur suivant...")
             next_button = driver.find_element(By.ID, YOUTUBE_NEXT_BUTTON_ID)
             next_button.click()
 
-            # Set as unlisted
+            # Définir comme non répertorié
             if verbose:
-                info("\t=> Setting as unlisted...")
+                info("\t=> Définition comme non répertorié...")
             
             radio_button = driver.find_elements(By.XPATH, YOUTUBE_RADIO_BUTTON_XPATH)
             radio_button[2].click()
 
             if verbose:
-                info("\t=> Clicking done button...")
+                info("\t=> Clic sur le bouton terminé...")
 
-            # Click done button
+            # Cliquer sur le bouton terminé
             done_button = driver.find_element(By.ID, YOUTUBE_DONE_BUTTON_ID)
             done_button.click()
 
-            # Wait for 2 seconds
+            # Attendre 2 secondes
             time.sleep(2)
 
-            # Get latest video
+            # Obtenir la dernière vidéo
             if verbose:
-                info("\t=> Getting video URL...")
+                info("\t=> Obtention de l'URL de la vidéo...")
 
-            # Get the latest uploaded video URL
+            # Obtenir l'URL de la dernière vidéo téléversée
             driver.get(f"https://studio.youtube.com/channel/{self.channel_id}/videos/short")
             time.sleep(2)
             videos = driver.find_elements(By.TAG_NAME, "ytcp-video-row")
@@ -766,18 +766,18 @@ class YouTube:
             anchor_tag = first_video.find_element(By.TAG_NAME, "a")
             href = anchor_tag.get_attribute("href")
             if verbose:
-                info(f"\t=> Extracting video ID from URL: {href}")
+                info(f"\t=> Extraction de l'ID de la vidéo depuis l'URL: {href}")
             video_id = href.split("/")[-2]
 
-            # Build URL
+            # Construire l'URL
             url = build_url(video_id)
 
             self.uploaded_video_url = url
 
             if verbose:
-                success(f" => Uploaded Video: {url}")
+                success(f" => Vidéo téléversée: {url}")
 
-            # Add video to cache
+            # Ajouter la vidéo au cache
             self.add_video({
                 "title": self.metadata["title"],
                 "description": self.metadata["description"],
@@ -785,7 +785,7 @@ class YouTube:
                 "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             })
 
-            # Close the browser
+            # Fermer le navigateur
             driver.quit()
 
             return True
@@ -796,13 +796,13 @@ class YouTube:
 
     def get_videos(self) -> List[dict]:
         """
-        Gets the uploaded videos from the YouTube Channel.
+        Récupère les vidéos téléversées de la chaîne YouTube.
 
         Returns:
-            videos (List[dict]): The uploaded videos.
+            videos (List[dict]): Les vidéos téléversées.
         """
         if not os.path.exists(get_youtube_cache_path()):
-            # Create the cache file
+            # Créer le fichier de cache
             with open(get_youtube_cache_path(), 'w') as file:
                 json.dump({
                     "videos": []
@@ -810,10 +810,10 @@ class YouTube:
             return []
 
         videos = []
-        # Read the cache file
+        # Lire le fichier de cache
         with open(get_youtube_cache_path(), 'r') as file:
             previous_json = json.loads(file.read())
-            # Find our account
+            # Trouver notre compte
             accounts = previous_json["accounts"]
             for account in accounts:
                 if account["id"] == self._account_uuid:

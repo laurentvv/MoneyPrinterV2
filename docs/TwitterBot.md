@@ -1,15 +1,15 @@
-# Twitter Bot
+# Bot Twitter
 
-This bot is designed to automate the process of growing a Twitter account. Once you created a new account, provide the path to the Firefox Profile and the bot will start posting tweets based on the subject you provided during the account creation.
+Ce bot est conçu pour automatiser le processus de croissance d'un compte Twitter. Une fois que vous avez créé un nouveau compte, fournissez le chemin d'accès au profil Firefox et le bot commencera à publier des tweets en fonction du sujet que vous avez fourni lors de la création du compte.
 
-## Relevant Configuration
+## Configuration pertinente
 
-In your `config.json`, you need the following attributes filled out, so that the bot can function correctly.
+Dans votre `config.json`, vous devez remplir les attributs suivants pour que le bot puisse fonctionner correctement.
 
 ```json
 {
-  "twitter_language": "Any Language, formatting doesn't matter",
+  "twitter_language": "N'importe quelle langue, le formatage n'a pas d'importance",
   "headless": true,
-  "llm": "The Large Language Model you want to use, check Configuration.md for more information",
+  "llm": "Le grand modèle de langage que vous souhaitez utiliser, consultez Configuration.md pour plus d'informations",
 }
 ```

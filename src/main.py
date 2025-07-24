@@ -17,79 +17,79 @@ from classes.Outreach import Outreach
 from classes.AFM import AffiliateMarketing
 
 def main():
-    """Main entry point for the application, providing a menu-driven interface
-    to manage YouTube, Twitter bots, Affiliate Marketing, and Outreach tasks.
+    """Point d'entrée principal de l'application, fournissant une interface pilotée par menu
+    pour gérer les tâches YouTube, Twitter, de marketing d'affiliation et de prospection.
 
-    This function allows users to:
-    1. Start the YouTube Shorts Automater to manage YouTube accounts, 
-       generate and upload videos, and set up CRON jobs.
-    2. Start a Twitter Bot to manage Twitter accounts, post tweets, and 
-       schedule posts using CRON jobs.
-    3. Manage Affiliate Marketing by creating pitches and sharing them via 
-       Twitter accounts.
-    4. Initiate an Outreach process for engagement and promotion tasks.
-    5. Exit the application.
+    Cette fonction permet aux utilisateurs de :
+    1. Démarrer l'automatisation des YouTube Shorts pour gérer les comptes YouTube,
+       générer et téléverser des vidéos, et configurer des tâches CRON.
+    2. Démarrer un bot Twitter pour gérer les comptes Twitter, publier des tweets et
+       planifier des publications à l'aide de tâches CRON.
+    3. Gérer le marketing d'affiliation en créant des argumentaires et en les partageant via
+       les comptes Twitter.
+    4. Lancer un processus de prospection pour les tâches d'engagement et de promotion.
+    5. Quitter l'application.
 
-    The function continuously prompts users for input, validates it, and 
-    executes the selected option until the user chooses to quit.
+    La fonction demande en continu à l'utilisateur une entrée, la valide et
+    exécute l'option sélectionnée jusqu'à ce que l'utilisateur choisisse de quitter.
 
     Args:
         None
 
     Returns:
-        None"""
+        None
+    """
 
-    # Get user input
-    # user_input = int(question("Select an option: "))
+    # Obtenir l'entrée de l'utilisateur
     valid_input = False
     while not valid_input:
         try:
-    # Show user options
+            # Afficher les options à l'utilisateur
             info("\n============ OPTIONS ============", False)
 
             for idx, option in enumerate(OPTIONS):
                 print(colored(f" {idx + 1}. {option}", "cyan"))
 
             info("=================================\n", False)
-            user_input = input("Select an option: ").strip()
+            user_input = input("Sélectionnez une option: ").strip()
             if user_input == '':
                 print("\n" * 100)
-                raise ValueError("Empty input is not allowed.")
+                raise ValueError("L'entrée vide n'est pas autorisée.")
             user_input = int(user_input)
             valid_input = True
         except ValueError as e:
             print("\n" * 100)
-            print(f"Invalid input: {e}")
+            print(f"Entrée invalide: {e}")
 
 
-    # Start the selected option
+    # Démarrer l'option sélectionnée
     if user_input == 1:
-        info("Starting YT Shorts Automater...")
+        info("Démarrage de l'automatisation des YouTube Shorts...")
 
         cached_accounts = get_accounts("youtube")
 
         if len(cached_accounts) == 0:
-            warning("No accounts found in cache. Create one now?")
-            user_input = question("Yes/No: ")
+            warning("Aucun compte trouvé dans le cache. En créer un maintenant?")
+            user_input = question("Oui/Non: ")
 
             if user_input.lower() == "yes":
                 generated_uuid = str(uuid4())
 
-                success(f" => Generated ID: {generated_uuid}")
-                nickname = question(" => Enter a nickname for this account: ")
-                fp_profile = question(" => Enter the path to the Firefox profile: ")
-                niche = question(" => Enter the account niche: ")
-                language = question(" => Enter the account language: ")
+                success(f" => ID généré: {generated_uuid}")
+                nickname = question(" => Entrez un surnom pour ce compte: ")
+                fp_profile = question(" => Entrez le chemin vers le profil Firefox: ")
+                niche = question(" => Entrez la niche du compte: ")
+                language = question(" => Entrez la langue du compte: ")
                 
-                # Add image generation options
-                info("\n============ IMAGE GENERATION ============", False)
+                # Ajouter les options de génération d'images
+                info("\n============ GÉNÉRATION D'IMAGES ============", False)
                 print(colored(" 1. G4F (SDXL Turbo)", "cyan"))
                 print(colored(" 2. Cloudflare Worker", "cyan"))
                 info("=======================================", False)
-                print(colored("\nRecommendation: If you're unsure, select G4F (Option 1) as there's no additional setup", "yellow"))
+                print(colored("\nRecommandation: Si vous n'êtes pas sûr, sélectionnez G4F (Option 1) car il n'y a pas de configuration supplémentaire", "yellow"))
                 info("=======================================\n", False)
                 
-                image_gen_choice = question(" => Select image generation method (1/2): ")
+                image_gen_choice = question(" => Sélectionnez la méthode de génération d'images (1/2): ")
                 
                 account_data = {
                     "id": generated_uuid,
@@ -102,22 +102,22 @@ def main():
                 }
                 
                 if image_gen_choice == "2":
-                    worker_url = question(" => Enter your Cloudflare worker URL for image generation: ")
+                    worker_url = question(" => Entrez l'URL de votre worker Cloudflare pour la génération d'images: ")
                     account_data["worker_url"] = worker_url
 
                 add_account("youtube", account_data)
 
-                success("Account configured successfully!")
+                success("Compte configuré avec succès!")
         else:
             table = PrettyTable()
-            table.field_names = ["ID", "UUID", "Nickname", "Niche"]
+            table.field_names = ["ID", "UUID", "Surnom", "Niche"]
 
             for account in cached_accounts:
                 table.add_row([cached_accounts.index(account) + 1, colored(account["id"], "cyan"), colored(account["nickname"], "blue"), colored(account["niche"], "green")])
 
             print(table)
 
-            user_input = question("Select an account to start: ")
+            user_input = question("Sélectionnez un compte pour commencer: ")
 
             selected_account = None
 
@@ -126,7 +126,7 @@ def main():
                     selected_account = account
 
             if selected_account is None:
-                error("Invalid account selected. Please try again.", "red")
+                error("Compte invalide sélectionné. Veuillez réessayer.", "red")
                 main()
             else:
                 youtube = YouTube(
@@ -146,13 +146,13 @@ def main():
 
                     info("=================================\n", False)
 
-                    # Get user input
-                    user_input = int(question("Select an option: "))
+                    # Obtenir l'entrée de l'utilisateur
+                    user_input = int(question("Sélectionnez une option: "))
                     tts = TTS()
 
                     if user_input == 1:
                         youtube.generate_video(tts)
-                        upload_to_yt = question("Do you want to upload this video to YouTube? (Yes/No): ")
+                        upload_to_yt = question("Voulez-vous téléverser cette vidéo sur YouTube? (Oui/Non): ")
                         if upload_to_yt.lower() == "yes":
                             youtube.upload_video()
                     elif user_input == 2:
@@ -160,7 +160,7 @@ def main():
 
                         if len(videos) > 0:
                             videos_table = PrettyTable()
-                            videos_table.field_names = ["ID", "Date", "Title"]
+                            videos_table.field_names = ["ID", "Date", "Titre"]
 
                             for video in videos:
                                 videos_table.add_row([
@@ -171,9 +171,9 @@ def main():
 
                             print(videos_table)
                         else:
-                            warning(" No videos found.")
+                            warning(" Aucune vidéo trouvée.")
                     elif user_input == 3:
-                        info("How often do you want to upload?")
+                        info("À quelle fréquence voulez-vous téléverser?")
 
                         info("\n============ OPTIONS ============", False)
                         for idx, cron_option in enumerate(YOUTUBE_CRON_OPTIONS):
@@ -181,55 +181,56 @@ def main():
 
                         info("=================================\n", False)
 
-                        user_input = int(question("Select an Option: "))
+                        user_input = int(question("Sélectionnez une option: "))
 
                         cron_script_path = os.path.join(ROOT_DIR, "src", "cron.py")
                         command = f"python {cron_script_path} youtube {selected_account['id']}"
 
                         def job():
-                            """Executes a shell command using subprocess.run.
+                            """Exécute une commande shell à l'aide de subprocess.run.
 
-    This function runs a specified shell command using the subprocess module.
-    The command to be executed should be defined in the 'command' variable.
+                            Cette fonction exécute une commande shell spécifiée à l'aide du module subprocess.
+                            La commande à exécuter doit être définie dans la variable 'command'.
 
-    Args:
-        None
+                            Args:
+                                None
 
-    Returns:
-        None"""
+                            Returns:
+                                None
+                            """
                             subprocess.run(command)
 
                         if user_input == 1:
-                            # Upload Once
+                            # Téléverser une fois
                             schedule.every(1).day.do(job)
-                            success("Set up CRON Job.")
+                            success("Tâche CRON configurée.")
                         elif user_input == 2:
-                            # Upload Twice a day
+                            # Téléverser deux fois par jour
                             schedule.every().day.at("10:00").do(job)
                             schedule.every().day.at("16:00").do(job)
-                            success("Set up CRON Job.")
+                            success("Tâche CRON configurée.")
                         else:
                             break
                     elif user_input == 4:
                         if get_verbose():
-                            info(" => Climbing Options Ladder...", False)
+                            info(" => Remontée dans l'échelle des options...", False)
                         break
     elif user_input == 2:
-        info("Starting Twitter Bot...")
+        info("Démarrage du bot Twitter...")
 
         cached_accounts = get_accounts("twitter")
 
         if len(cached_accounts) == 0:
-            warning("No accounts found in cache. Create one now?")
-            user_input = question("Yes/No: ")
+            warning("Aucun compte trouvé dans le cache. En créer un maintenant?")
+            user_input = question("Oui/Non: ")
 
             if user_input.lower() == "yes":
                 generated_uuid = str(uuid4())
 
-                success(f" => Generated ID: {generated_uuid}")
-                nickname = question(" => Enter a nickname for this account: ")
-                fp_profile = question(" => Enter the path to the Firefox profile: ")
-                topic = question(" => Enter the account topic: ")
+                success(f" => ID généré: {generated_uuid}")
+                nickname = question(" => Entrez un surnom pour ce compte: ")
+                fp_profile = question(" => Entrez le chemin vers le profil Firefox: ")
+                topic = question(" => Entrez le sujet du compte: ")
 
                 add_account("twitter", {
                     "id": generated_uuid,
@@ -240,14 +241,14 @@ def main():
                 })
         else:
             table = PrettyTable()
-            table.field_names = ["ID", "UUID", "Nickname", "Account Topic"]
+            table.field_names = ["ID", "UUID", "Surnom", "Sujet du compte"]
 
             for account in cached_accounts:
                 table.add_row([cached_accounts.index(account) + 1, colored(account["id"], "cyan"), colored(account["nickname"], "blue"), colored(account["topic"], "green")])
 
             print(table)
 
-            user_input = question("Select an account to start: ")
+            user_input = question("Sélectionnez un compte pour commencer: ")
 
             selected_account = None
 
@@ -256,7 +257,7 @@ def main():
                     selected_account = account
 
             if selected_account is None:
-                error("Invalid account selected. Please try again.", "red")
+                error("Compte invalide sélectionné. Veuillez réessayer.", "red")
                 main()
             else:
                 twitter = Twitter(selected_account["id"], selected_account["nickname"], selected_account["firefox_profile"], selected_account["topic"])
@@ -270,8 +271,8 @@ def main():
 
                     info("=================================\n", False)
 
-                    # Get user input
-                    user_input = int(question("Select an option: "))
+                    # Obtenir l'entrée de l'utilisateur
+                    user_input = int(question("Sélectionnez une option: "))
 
                     if user_input == 1:
                         twitter.post()
@@ -280,7 +281,7 @@ def main():
 
                         posts_table = PrettyTable()
 
-                        posts_table.field_names = ["ID", "Date", "Content"]
+                        posts_table.field_names = ["ID", "Date", "Contenu"]
 
                         for post in posts:
                             posts_table.add_row([
@@ -291,7 +292,7 @@ def main():
 
                         print(posts_table)
                     elif user_input == 3:
-                        info("How often do you want to post?")
+                        info("À quelle fréquence voulez-vous publier?")
 
                         info("\n============ OPTIONS ============", False)
                         for idx, cron_option in enumerate(TWITTER_CRON_OPTIONS):
@@ -299,59 +300,60 @@ def main():
 
                         info("=================================\n", False)
 
-                        user_input = int(question("Select an Option: "))
+                        user_input = int(question("Sélectionnez une option: "))
 
                         cron_script_path = os.path.join(ROOT_DIR, "src", "cron.py")
                         command = f"python {cron_script_path} twitter {selected_account['id']}"
 
                         def job():
-                            """Executes a shell command using subprocess.run.
+                            """Exécute une commande shell à l'aide de subprocess.run.
 
-    This function runs a specified shell command using the subprocess module.
-    The command to be executed should be defined in the 'command' variable.
+                            Cette fonction exécute une commande shell spécifiée à l'aide du module subprocess.
+                            La commande à exécuter doit être définie dans la variable 'command'.
 
-    Args:
-        None
+                            Args:
+                                None
 
-    Returns:
-        None"""
+                            Returns:
+                                None
+                            """
                             subprocess.run(command)
 
                         if user_input == 1:
-                            # Post Once a day
+                            # Publier une fois par jour
                             schedule.every(1).day.do(job)
-                            success("Set up CRON Job.")
+                            success("Tâche CRON configurée.")
                         elif user_input == 2:
-                            # Post twice a day
+                            # Publier deux fois par jour
                             schedule.every().day.at("10:00").do(job)
                             schedule.every().day.at("16:00").do(job)
-                            success("Set up CRON Job.")
+                            success("Tâche CRON configurée.")
                         elif user_input == 3:
-                            # Post thrice a day
+                            # Publier trois fois par jour
                             schedule.every().day.at("08:00").do(job)
                             schedule.every().day.at("12:00").do(job)
                             schedule.every().day.at("18:00").do(job)
-                            success("Set up CRON Job.")
+                            success("Tâche CRON configurée.")
                         else:
                             break
                     elif user_input == 4:
                         if get_verbose():
-                            info(" => Climbing Options Ladder...", False)
+                            info(" => Remontée dans l'échelle des options...", False)
                         break
     elif user_input == 3:
-        info("Starting Affiliate Marketing...")
+        info("Démarrage du marketing d'affiliation...")
 
         cached_products = get_products()
 
         if len(cached_products) == 0:
-            warning("No products found in cache. Create one now?")
-            user_input = question("Yes/No: ")
+            warning("Aucun produit trouvé dans le cache. En créer un maintenant?")
+            user_input = question("Oui/Non: ")
 
             if user_input.lower() == "yes":
-                affiliate_link = question(" => Enter the affiliate link: ")
-                twitter_uuid = question(" => Enter the Twitter Account UUID: ")
+                affiliate_link = question(" => Entrez le lien d'affiliation: ")
+                twitter_uuid = question(" => Entrez l'UUID du compte Twitter: ")
 
-                # Find the account
+                # Trouver le compte
                 account = None
                 for acc in get_accounts("twitter"):
                     if acc["id"] == twitter_uuid:
@@ -369,14 +371,14 @@ def main():
                 afm.share_pitch("twitter")
         else:
             table = PrettyTable()
-            table.field_names = ["ID", "Affiliate Link", "Twitter Account UUID"]
+            table.field_names = ["ID", "Lien d'affiliation", "UUID du compte Twitter"]
 
             for product in cached_products:
                 table.add_row([cached_products.index(product) + 1, colored(product["affiliate_link"], "cyan"), colored(product["twitter_uuid"], "blue")])
 
             print(table)
 
-            user_input = question("Select a product to start: ")
+            user_input = question("Sélectionnez un produit pour commencer: ")
 
             selected_product = None
 
@@ -385,10 +387,10 @@ def main():
                     selected_product = product
 
             if selected_product is None:
-                error("Invalid product selected. Please try again.", "red")
+                error("Produit invalide sélectionné. Veuillez réessayer.", "red")
                 main()
             else:
-                # Find the account
+                # Trouver le compte
                 account = None
                 for acc in get_accounts("twitter"):
                     if acc["id"] == selected_product["twitter_uuid"]:
@@ -400,36 +402,36 @@ def main():
                 afm.share_pitch("twitter")
 
     elif user_input == 4:
-        info("Starting Outreach...")
+        info("Démarrage de la prospection...")
 
         outreach = Outreach()
 
         outreach.start()
     elif user_input == 5:
         if get_verbose():
-            print(colored(" => Quitting...", "blue"))
+            print(colored(" => Quitter...", "blue"))
         sys.exit(0)
     else:
-        error("Invalid option selected. Please try again.", "red")
+        error("Option invalide sélectionnée. Veuillez réessayer.", "red")
         main()
     
 
 if __name__ == "__main__":
-    # Print ASCII Banner
+    # Afficher la bannière ASCII
     print_banner()
 
     first_time = get_first_time_running()
 
     if first_time:
-        print(colored("Hey! It looks like you're running MoneyPrinter V2 for the first time. Let's get you setup first!", "yellow"))
+        print(colored("Salut! Il semble que ce soit la première fois que vous exécutez MoneyPrinter V2. Commençons par la configuration!", "yellow"))
 
-    # Setup file tree
+    # Configurer l'arborescence des fichiers
     assert_folder_structure()
 
-    # Remove temporary files
+    # Supprimer les fichiers temporaires
     rem_temp_files()
 
-    # Fetch MP3 Files
+    # Récupérer les fichiers MP3
     fetch_songs()
 
     while True:

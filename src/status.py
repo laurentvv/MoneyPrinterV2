@@ -2,11 +2,11 @@ from termcolor import colored
 
 def error(message: str, show_emoji: bool = True) -> None:
     """
-    Prints an error message.
+    Affiche un message d'erreur.
 
     Args:
-        message (str): The error message
-        show_emoji (bool): Whether to show the emoji
+        message (str): Le message d'erreur
+        show_emoji (bool): Indique si l'emoji doit être affiché
 
     Returns:
         None
@@ -16,11 +16,11 @@ def error(message: str, show_emoji: bool = True) -> None:
 
 def success(message: str, show_emoji: bool = True) -> None:
     """
-    Prints a success message.
+    Affiche un message de succès.
 
     Args:
-        message (str): The success message
-        show_emoji (bool): Whether to show the emoji
+        message (str): Le message de succès
+        show_emoji (bool): Indique si l'emoji doit être affiché
 
     Returns:
         None
@@ -30,11 +30,11 @@ def success(message: str, show_emoji: bool = True) -> None:
 
 def info(message: str, show_emoji: bool = True) -> None:
     """
-    Prints an info message.
+    Affiche un message d'information.
 
     Args:
-        message (str): The info message
-        show_emoji (bool): Whether to show the emoji
+        message (str): Le message d'information
+        show_emoji (bool): Indique si l'emoji doit être affiché
 
     Returns:
         None
@@ -44,11 +44,11 @@ def info(message: str, show_emoji: bool = True) -> None:
 
 def warning(message: str, show_emoji: bool = True) -> None:
     """
-    Prints a warning message.
+    Affiche un message d'avertissement.
 
     Args:
-        message (str): The warning message
-        show_emoji (bool): Whether to show the emoji
+        message (str): Le message d'avertissement
+        show_emoji (bool): Indique si l'emoji doit être affiché
 
     Returns:
         None
@@ -58,14 +58,14 @@ def warning(message: str, show_emoji: bool = True) -> None:
 
 def question(message: str, show_emoji: bool = True) -> str:
     """
-    Prints a question message and returns the user's input.
+    Affiche une question et retourne la saisie de l'utilisateur.
 
     Args:
-        message (str): The question message
-        show_emoji (bool): Whether to show the emoji
+        message (str): Le message de la question
+        show_emoji (bool): Indique si l'emoji doit être affiché
 
     Returns:
-        user_input (str): The user's input
+        user_input (str): La saisie de l'utilisateur
     """
     emoji = "❓" if show_emoji else ""
     return input(colored(f"{emoji} {message}", "magenta"))

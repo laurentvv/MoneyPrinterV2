@@ -9,45 +9,45 @@ from config import *
 
 def close_running_selenium_instances() -> None:
     """
-    Closes any running Selenium instances.
+    Ferme toutes les instances Selenium en cours d'exécution.
 
     Returns:
         None
     """
     try:
-        info(" => Closing running Selenium instances...")
+        info(" => Fermeture des instances Selenium en cours d'exécution...")
 
-        # Kill all running Firefox instances
+        # Tuer toutes les instances Firefox en cours d'exécution
         if platform.system() == "Windows":
             os.system("taskkill /f /im firefox.exe")
         else:
             os.system("pkill firefox")
 
-        success(" => Closed running Selenium instances.")
+        success(" => Instances Selenium en cours d'exécution fermées.")
 
     except Exception as e:
-        error(f"Error occurred while closing running Selenium instances: {str(e)}")
+        error(f"Erreur lors de la fermeture des instances Selenium en cours d'exécution: {str(e)}")
 
 def build_url(youtube_video_id: str) -> str:
     """
-    Builds the URL to the YouTube video.
+    Construit l'URL de la vidéo YouTube.
 
     Args:
-        youtube_video_id (str): The YouTube video ID.
+        youtube_video_id (str): L'ID de la vidéo YouTube.
 
     Returns:
-        url (str): The URL to the YouTube video.
+        url (str): L'URL de la vidéo YouTube.
     """
     return f"https://www.youtube.com/watch?v={youtube_video_id}"
 
 def rem_temp_files() -> None:
     """
-    Removes temporary files in the `.mp` directory.
+    Supprime les fichiers temporaires dans le répertoire `.mp`.
 
     Returns:
         None
     """
-    # Path to the `.mp` directory
+    # Chemin vers le répertoire `.mp`
     mp_dir = os.path.join(ROOT_DIR, ".mp")
 
     files = os.listdir(mp_dir)
@@ -58,53 +58,53 @@ def rem_temp_files() -> None:
 
 def fetch_songs() -> None:
     """
-    Downloads songs into songs/ directory to use with geneated videos.
+    Télécharge des chansons dans le répertoire songs/ à utiliser avec les vidéos générées.
 
     Returns:
         None
     """
     try:
-        info(f" => Fetching songs...")
+        info(f" => Récupération des chansons...")
 
         files_dir = os.path.join(ROOT_DIR, "Songs")
         if not os.path.exists(files_dir):
             os.mkdir(files_dir)
             if get_verbose():
-                info(f" => Created directory: {files_dir}")
+                info(f" => Répertoire créé: {files_dir}")
         else:
-            # Skip if songs are already downloaded
+            # Ignorer si les chansons sont déjà téléchargées
             return
 
-        # Download songs
+        # Télécharger les chansons
         response = requests.get(get_zip_url() or "https://filebin.net/bb9ewdtckolsf3sg/drive-download-20240209T180019Z-001.zip")
 
-        # Save the zip file
+        # Enregistrer le fichier zip
         with open(os.path.join(files_dir, "songs.zip"), "wb") as file:
             file.write(response.content)
 
-        # Unzip the file
+        # Décompresser le fichier
         with zipfile.ZipFile(os.path.join(files_dir, "songs.zip"), "r") as file:
             file.extractall(files_dir)
 
-        # Remove the zip file
+        # Supprimer le fichier zip
         os.remove(os.path.join(files_dir, "songs.zip"))
 
-        success(" => Downloaded Songs to ../Songs.")
+        success(" => Chansons téléchargées dans ../Songs.")
 
     except Exception as e:
-        error(f"Error occurred while fetching songs: {str(e)}")
+        error(f"Erreur lors de la récupération des chansons: {str(e)}")
 
 def choose_random_song() -> str:
     """
-    Chooses a random song from the songs/ directory.
+    Choisit une chanson au hasard dans le répertoire songs/.
 
     Returns:
-        str: The path to the chosen song.
+        str: Le chemin vers la chanson choisie.
     """
     try:
         songs = os.listdir(os.path.join(ROOT_DIR, "Songs"))
         song = random.choice(songs)
-        success(f" => Chose song: {song}")
+        success(f" => Chanson choisie: {song}")
         return os.path.join(ROOT_DIR, "Songs", song)
     except Exception as e:
-        error(f"Error occurred while choosing random song: {str(e)}")
+        error(f"Erreur lors du choix d'une chanson au hasard: {str(e)}")

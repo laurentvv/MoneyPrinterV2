@@ -22,16 +22,16 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 class Twitter:
     """
-    Class for the Bot, that grows a Twitter account.
+    Classe pour le Bot, qui fait grandir un compte Twitter.
     """
     def __init__(self, account_uuid: str, account_nickname: str, fp_profile_path: str, topic: str) -> None:
         """
-        Initializes the Twitter Bot.
+        Initialise le Bot Twitter.
 
         Args:
-            account_uuid (str): The account UUID
-            account_nickname (str): The account nickname
-            fp_profile_path (str): The path to the Firefox profile
+            account_uuid (str): L'UUID du compte
+            account_nickname (str): Le surnom du compte
+            fp_profile_path (str): Le chemin vers le profil Firefox
 
         Returns:
             None
@@ -41,29 +41,29 @@ class Twitter:
         self.fp_profile_path: str = fp_profile_path
         self.topic: str = topic
 
-        # Initialize the Firefox profile
+        # Initialiser le profil Firefox
         self.options: Options = Options()
         
-        # Set headless state of browser
+        # Définir l'état headless du navigateur
         if get_headless():
             self.options.add_argument("--headless")
 
-        # Set the profile path
+        # Définir le chemin du profil
         self.options.add_argument("-profile")
         self.options.add_argument(fp_profile_path)
 
-        # Set the service
+        # Définir le service
         self.service: Service = Service(GeckoDriverManager().install())
 
-        # Initialize the browser
+        # Initialiser le navigateur
         self.browser: webdriver.Firefox = webdriver.Firefox(service=self.service, options=self.options)
 
     def post(self, text: str = None) -> None:
         """
-        Starts the Twitter Bot.
+        Démarre le Bot Twitter.
 
         Args:
-            text (str): The text to post
+            text (str): Le texte à publier
 
         Returns:
             None
@@ -78,7 +78,7 @@ class Twitter:
         post_content: str = self.generate_post()
         now: datetime = datetime.now()
 
-        print(colored(f" => Posting to Twitter:", "blue"), post_content[:30] + "...")
+        print(colored(f" => Publication sur Twitter:", "blue"), post_content[:30] + "...")
 
         try:
             bot.find_element(By.XPATH, "//a[@data-testid='SideNav_NewTweet_Button']").click()
@@ -100,27 +100,27 @@ class Twitter:
         bot.find_element(By.XPATH, "//button[@data-testid='tweetButton']").click()
 
         if verbose:
-            print(colored(" => Pressed [ENTER] Button on Twitter..", "blue"))
+            print(colored(" => Bouton [ENTRÉE] pressé sur Twitter..", "blue"))
         time.sleep(4)
 
-        # Add the post to the cache
+        # Ajouter la publication au cache
         self.add_post({
             "content": post_content,
             "date": now.strftime("%m/%d/%Y, %H:%M:%S")
         })
 
-        success("Posted to Twitter successfully!")
+        success("Publié sur Twitter avec succès!")
 
 
     def get_posts(self) -> List[dict]:
         """
-        Gets the posts from the cache.
+        Récupère les publications du cache.
 
         Returns:
-            posts (List[dict]): The posts
+            posts (List[dict]): Les publications
         """
         if not os.path.exists(get_twitter_cache_path()):
-            # Create the cache file
+            # Créer le fichier de cache
             with open(get_twitter_cache_path(), 'w') as file:
                 json.dump({
                     "posts": []
@@ -129,7 +129,7 @@ class Twitter:
         with open(get_twitter_cache_path(), 'r') as file:
             parsed = json.load(file)
 
-            # Find our account
+            # Trouver notre compte
             accounts = parsed["accounts"]
             for account in accounts:
                 if account["id"] == self.account_uuid:
@@ -138,15 +138,15 @@ class Twitter:
                     if posts is None:
                         return []
 
-                    # Return the posts
+                    # Retourner les publications
                     return posts
         
     def add_post(self, post: dict) -> None:
         """
-        Adds a post to the cache.
+        Ajoute une publication au cache.
 
         Args:
-            post (dict): The post to add
+            post (dict): La publication à ajouter
 
         Returns:
             None
@@ -157,46 +157,46 @@ class Twitter:
         with open(get_twitter_cache_path(), "r") as file:
             previous_json = json.loads(file.read())
             
-            # Find our account
+            # Trouver notre compte
             accounts = previous_json["accounts"]
             for account in accounts:
                 if account["id"] == self.account_uuid:
                     account["posts"].append(post)
             
-            # Commit changes
+            # Valider les changements
             with open(get_twitter_cache_path(), "w") as f:
                 f.write(json.dumps(previous_json))
             
 
     def generate_post(self) -> str:
         """
-        Generates a post for the Twitter account based on the topic.
+        Génère une publication pour le compte Twitter en fonction du sujet.
 
         Returns:
-            post (str): The post
+            post (str): La publication
         """
         completion = g4f.ChatCompletion.create(
             model=parse_model(get_model()),
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate a Twitter post about: {self.topic} in {get_twitter_language()}. The Limit is 2 sentences. Choose a specific sub-topic of the provided topic."
+                    "content": f"Générez une publication Twitter sur: {self.topic} en {get_twitter_language()}. La limite est de 2 phrases. Choisissez un sous-sujet spécifique du sujet fourni."
                 }
             ]
         )
 
         if get_verbose():
-            info("Generating a post...")
+            info("Génération d'une publication...")
 
         if completion is None:
-            error("Failed to generate a post. Please try again.")
+            error("Échec de la génération d'une publication. Veuillez réessayer.")
             sys.exit(1)
 
-        # Apply Regex to remove all *
+        # Appliquer Regex pour supprimer tous les *
         completion = re.sub(r"\*", "", completion).replace("\"", "")
     
         if get_verbose():
-            info(f"Length of post: {len(completion)}")
+            info(f"Longueur de la publication: {len(completion)}")
         if len(completion) >= 260:
             return self.generate_post()
 

@@ -1,18 +1,18 @@
-# MPV2 Roadmap
+# Feuille de route de MPV2
 
-This document outlines the features that need to be implemented in MPV2.
+Ce document décrit les fonctionnalités qui doivent être implémentées dans MPV2.
 
-## Features
+## Fonctionnalités
 
-- [ ] Automated Cold Calling
-- [ ] Item Flipping (such as sneakers)
-- [ ] Create a Short based on long-form content
-- [ ] Subtitles for Shorts
+- [ ] Appels à froid automatisés
+- [ ] Revente d'articles (comme des baskets)
+- [ ] Créer un Short à partir d'un contenu long
+- [ ] Sous-titres pour les Shorts
 
-## Adding a new feature
+## Ajout d'une nouvelle fonctionnalité
 
-If you want to add a new feature to MPV2, please create a new issue and label it with `enhancement`. After that, create a new branch and start working on the feature. Once you are done, create a pull request and assign it to the issue you created earlier.
+Si vous souhaitez ajouter une nouvelle fonctionnalité à MPV2, veuillez créer une nouvelle issue et l'étiqueter avec `enhancement`. Après cela, créez une nouvelle branche et commencez à travailler sur la fonctionnalité. Une fois que vous avez terminé, créez une pull request et assignez-la à l'issue que vous avez créée précédemment.
 
-## Contributing
+## Contribuer
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Veuillez lire [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails sur notre code de conduite et le processus de soumission de pull requests.

@@ -1,26 +1,26 @@
-# YouTube Shorts Automater
+# Automateur de YouTube Shorts
 
-MPV2 uses a similar implementation of V1 (see [MPV1](https://github.com/FujiwaraChoki/MoneyPrinter)), to generate Video-Files and upload them to YouTube Shorts.
+MPV2 utilise une implémentation similaire à celle de V1 (voir [MPV1](https://github.com/FujiwaraChoki/MoneyPrinter)), pour générer des fichiers vidéo et les télécharger sur YouTube Shorts.
 
-In contrast to V1, V2 uses AI generated images as the visuals for the video, instead of using stock footage. This makes the videos more unique and less likely to be flagged by YouTube. V2 also supports music right from the get-go.
+Contrairement à V1, V2 utilise des images générées par IA comme visuels pour la vidéo, au lieu d'utiliser des séquences d'archives. Cela rend les vidéos plus uniques et moins susceptibles d'être signalées par YouTube. V2 prend également en charge la musique dès le départ.
 
-## Relevant Configuration
+## Configuration pertinente
 
-In your `config.json`, you need the following attributes filled out, so that the bot can function correctly.
+Dans votre `config.json`, vous devez remplir les attributs suivants pour que le bot puisse fonctionner correctement.
 
 ```json
 {
-  "firefox_profile": "The path to your Firefox profile (used to log in to YouTube)",
+  "firefox_profile": "Le chemin d'accès à votre profil Firefox (utilisé pour vous connecter à YouTube)",
   "headless": true,
-  "llm": "The Large Language Model you want to use to generate the video script.",
-  "image_model": "What AI Model you want to use to generate images.",
+  "llm": "Le grand modèle de langage que vous souhaitez utiliser pour générer le script de la vidéo.",
+  "image_model": "Le modèle d'IA que vous souhaitez utiliser pour générer des images.",
   "threads": 4,
   "is_for_kids": true
 }
 ```
 
-## Roadmap
+## Feuille de route
 
-Here are some features that are planned for the future:
+Voici quelques fonctionnalités prévues pour l'avenir :
 
-- [ ] Subtitles (using either AssemblyAI or locally assembling them)
+- [ ] Sous-titres (en utilisant AssemblyAI ou en les assemblant localement)

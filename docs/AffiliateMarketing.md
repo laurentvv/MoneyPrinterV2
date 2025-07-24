@@ -1,24 +1,24 @@
-# AFM
+# Marketing d'affiliation
 
-This class is responsible for the Affiliate Marketing part of MPV2. It uses the `g4f` package (as all other classes) as it's way to utilize the power of LLMs, in this case, to generate tweets, based on information about an **Amazon Product**. MPV2 will scrape the page of the product, and save the **product title**, and **product features**, thus having enough information to be able to create a pitch for the product, and post it on Twitter.
+Cette classe est responsable de la partie Marketing d'Affiliation de MPV2. Elle utilise le package `g4f` (comme toutes les autres classes) pour utiliser la puissance des LLM, dans ce cas, pour générer des tweets, basés sur des informations sur un **Produit Amazon**. MPV2 va scraper la page du produit, et enregistrer le **titre du produit**, et les **caractéristiques du produit**, ayant ainsi assez d'informations pour pouvoir créer un argumentaire pour le produit, et le poster sur Twitter.
 
-## Relevant Configuration
+## Configuration pertinente
 
-In your `config.json`, you need the following attributes filled out, so that the bot can function correctly.
+Dans votre `config.json`, vous devez avoir les attributs suivants remplis, pour que le bot puisse fonctionner correctement.
 
 ```json
 {
-  "firefox_profile": "The path to your Firefox profile (used to log in to Twitter)",
+  "firefox_profile": "Le chemin vers votre profil Firefox (utilisé pour se connecter à Twitter)",
   "headless": true,
-  "llm": "The Large Language Model you want to use to generate the tweet.",
+  "llm": "Le Grand Modèle de Langage que vous voulez utiliser pour générer le tweet.",
   "threads": 4
 }
 ```
 
-## Roadmap
+## Feuille de route
 
-Here are some features that are planned for the future:
+Voici quelques fonctionnalités qui sont prévues pour le futur :
 
-- [ ] Scrape more information about the product, to be able to create a more detailed pitch.
-- [ ] Join online communities related to the product, and post a pitch (with a link to the product) there.
-- [ ] Reply to tweets that are related to the product, with a pitch for the product.
+- [ ] Scraper plus d'informations sur le produit, pour pouvoir créer un argumentaire plus détaillé.
+- [ ] Rejoindre des communautés en ligne liées au produit, et y poster un argumentaire (avec un lien vers le produit).
+- [ ] Répondre aux tweets qui sont liés au produit, avec un argumentaire pour le produit.

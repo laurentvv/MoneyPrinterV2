@@ -6,49 +6,49 @@ from config import ROOT_DIR
 
 def get_cache_path() -> str:
     """
-    Gets the path to the cache file.
+    Obtient le chemin vers le fichier de cache.
 
     Returns:
-        path (str): The path to the cache folder
+        path (str): Le chemin vers le dossier de cache
     """
     return os.path.join(ROOT_DIR, '.mp')
 
 def get_afm_cache_path() -> str:
     """
-    Gets the path to the Affiliate Marketing cache file.
+    Obtient le chemin vers le fichier de cache du marketing d'affiliation.
 
     Returns:
-        path (str): The path to the AFM cache folder
+        path (str): Le chemin vers le dossier de cache de l'AFM
     """
     return os.path.join(get_cache_path(), 'afm.json')
 
 def get_twitter_cache_path() -> str:
     """
-    Gets the path to the Twitter cache file.
+    Obtient le chemin vers le fichier de cache de Twitter.
 
     Returns:
-        path (str): The path to the Twitter cache folder
+        path (str): Le chemin vers le dossier de cache de Twitter
     """
     return os.path.join(get_cache_path(), 'twitter.json')
 
 def get_youtube_cache_path() -> str:
     """
-    Gets the path to the YouTube cache file.
+    Obtient le chemin vers le fichier de cache de YouTube.
 
     Returns:
-        path (str): The path to the YouTube cache folder
+        path (str): Le chemin vers le dossier de cache de YouTube
     """
     return os.path.join(get_cache_path(), 'youtube.json')
 
 def get_accounts(provider: str) -> List[dict]:
     """
-    Gets the accounts from the cache.
+    Obtient les comptes depuis le cache.
 
     Args:
-        provider (str): The provider to get the accounts for
+        provider (str): Le fournisseur pour lequel obtenir les comptes
 
     Returns:
-        account (List[dict]): The accounts
+        account (List[dict]): Les comptes
     """
     cache_path = ""
 
@@ -58,7 +58,7 @@ def get_accounts(provider: str) -> List[dict]:
         cache_path = get_youtube_cache_path()
 
     if not os.path.exists(cache_path):
-        # Create the cache file
+        # Créer le fichier de cache
         with open(cache_path, 'w') as file:
             json.dump({
                 "accounts": []
@@ -73,39 +73,39 @@ def get_accounts(provider: str) -> List[dict]:
         if 'accounts' not in parsed:
             return []
 
-        # Get accounts dictionary
+        # Obtenir le dictionnaire des comptes
         return parsed['accounts']
 
 def add_account(provider: str, account: dict) -> None:
     """
-    Adds an account to the cache.
+    Ajoute un compte au cache.
 
     Args:
-        account (dict): The account to add
+        account (dict): Le compte à ajouter
 
     Returns:
         None
     """
     if provider == "twitter":
-        # Get the current accounts
+        # Obtenir les comptes actuels
         accounts = get_accounts("twitter")
 
-        # Add the new account
+        # Ajouter le nouveau compte
         accounts.append(account)
 
-        # Write the new accounts to the cache
+        # Écrire les nouveaux comptes dans le cache
         with open(get_twitter_cache_path(), 'w') as file:
             json.dump({
                 "accounts": accounts
             }, file, indent=4)
     elif provider == "youtube":
-        # Get the current accounts
+        # Obtenir les comptes actuels
         accounts = get_accounts("youtube")
 
-        # Add the new account
+        # Ajouter le nouveau compte
         accounts.append(account)
 
-        # Write the new accounts to the cache
+        # Écrire les nouveaux comptes dans le cache
         with open(get_youtube_cache_path(), 'w') as file:
             json.dump({
                 "accounts": accounts
@@ -113,21 +113,21 @@ def add_account(provider: str, account: dict) -> None:
 
 def remove_account(account_id: str) -> None:
     """
-    Removes an account from the cache.
+    Supprime un compte du cache.
 
     Args:
-        account_id (str): The ID of the account to remove
+        account_id (str): L'ID du compte à supprimer
 
     Returns:
         None
     """
-    # Get the current accounts
+    # Obtenir les comptes actuels
     accounts = get_accounts()
 
-    # Remove the account
+    # Supprimer le compte
     accounts = [account for account in accounts if account['id'] != account_id]
 
-    # Write the new accounts to the cache
+    # Écrire les nouveaux comptes dans le cache
     with open(get_twitter_cache_path(), 'w') as file:
         json.dump({
             "accounts": accounts
@@ -135,13 +135,13 @@ def remove_account(account_id: str) -> None:
 
 def get_products() -> List[dict]:
     """
-    Gets the products from the cache.
+    Obtient les produits depuis le cache.
 
     Returns:
-        products (List[dict]): The products
+        products (List[dict]): Les produits
     """
     if not os.path.exists(get_afm_cache_path()):
-        # Create the cache file
+        # Créer le fichier de cache
         with open(get_afm_cache_path(), 'w') as file:
             json.dump({
                 "products": []
@@ -150,26 +150,26 @@ def get_products() -> List[dict]:
     with open(get_afm_cache_path(), 'r') as file:
         parsed = json.load(file)
 
-        # Get the products
+        # Obtenir les produits
         return parsed["products"]
     
 def add_product(product: dict) -> None:
     """
-    Adds a product to the cache.
+    Ajoute un produit au cache.
 
     Args:
-        product (dict): The product to add
+        product (dict): Le produit à ajouter
 
     Returns:
         None
     """
-    # Get the current products
+    # Obtenir les produits actuels
     products = get_products()
 
-    # Add the new product
+    # Ajouter le nouveau produit
     products.append(product)
 
-    # Write the new products to the cache
+    # Écrire les nouveaux produits dans le cache
     with open(get_afm_cache_path(), 'w') as file:
         json.dump({
             "products": products
@@ -177,9 +177,9 @@ def add_product(product: dict) -> None:
     
 def get_results_cache_path() -> str:
     """
-    Gets the path to the results cache file.
+    Obtient le chemin vers le fichier de cache des résultats.
 
     Returns:
-        path (str): The path to the results cache folder
+        path (str): Le chemin vers le dossier de cache des résultats
     """
     return os.path.join(get_cache_path(), 'scraper_results.csv')

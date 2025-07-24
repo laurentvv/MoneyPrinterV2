@@ -1,4 +1,4 @@
-# RUN THIS N AMOUNT OF TIMES
+# EXÉCUTER CE N NOMBRE DE FOIS
 import sys
 
 from status import *
@@ -9,23 +9,24 @@ from classes.Twitter import Twitter
 from classes.YouTube import YouTube
 
 def main():
-    """Main function to post content to Twitter or upload videos to YouTube.
+    """Fonction principale pour publier du contenu sur Twitter ou téléverser des vidéos sur YouTube.
 
-    This function determines its operation based on command-line arguments:
-    - If the purpose is "twitter", it initializes a Twitter account and posts a message.
-    - If the purpose is "youtube", it initializes a YouTube account, generates a video with TTS, and uploads it.
+    Cette fonction détermine son fonctionnement en fonction des arguments de la ligne de commande :
+    - Si le but est "twitter", elle initialise un compte Twitter et publie un message.
+    - Si le but est "youtube", elle initialise un compte YouTube, génère une vidéo avec TTS et la téléverse.
 
-    Command-line arguments:
-        sys.argv[1]: A string indicating the purpose, either "twitter" or "youtube".
-        sys.argv[2]: A string representing the account UUID.
+    Arguments de la ligne de commande :
+        sys.argv[1] : Une chaîne de caractères indiquant le but, soit "twitter", soit "youtube".
+        sys.argv[2] : Une chaîne de caractères représentant l'UUID du compte.
 
-    The function also handles verbose output based on user settings and reports success or errors as appropriate.
+    La fonction gère également la sortie verbeuse en fonction des paramètres de l'utilisateur et signale les succès ou les erreurs, le cas échéant.
 
     Args:
-        None. The function uses command-line arguments accessed via sys.argv.
+        None. La fonction utilise les arguments de la ligne de commande accessibles via sys.argv.
 
     Returns:
-        None. The function performs operations based on the purpose and account UUID and does not return any value."""
+        None. La fonction effectue des opérations en fonction du but et de l'UUID du compte et ne renvoie aucune valeur.
+    """
     purpose = str(sys.argv[1])
     account_id = str(sys.argv[2])
 
@@ -35,12 +36,12 @@ def main():
         accounts = get_accounts("twitter")
 
         if not account_id:
-            error("Account UUID cannot be empty.")
+            error("L'UUID du compte ne peut pas être vide.")
 
         for acc in accounts:
             if acc["id"] == account_id:
                 if verbose:
-                    info("Initializing Twitter...")
+                    info("Initialisation de Twitter...")
                 twitter = Twitter(
                     acc["id"],
                     acc["nickname"],
@@ -49,7 +50,7 @@ def main():
                 )
                 twitter.post()
                 if verbose:
-                    success("Done posting.")
+                    success("Publication terminée.")
                 break
     elif purpose == "youtube":
         tts = TTS()
@@ -57,12 +58,12 @@ def main():
         accounts = get_accounts("youtube")
 
         if not account_id:
-            error("Account UUID cannot be empty.")
+            error("L'UUID du compte ne peut pas être vide.")
 
         for acc in accounts:
             if acc["id"] == account_id:
                 if verbose:
-                    info("Initializing YouTube...")
+                    info("Initialisation de YouTube...")
                 youtube = YouTube(
                     acc["id"],
                     acc["nickname"],
@@ -73,10 +74,10 @@ def main():
                 youtube.generate_video(tts)
                 youtube.upload_video()
                 if verbose:
-                    success("Uploaded Short.")
+                    success("Short téléversé.")
                 break
     else:
-        error("Invalid Purpose, exiting...")
+        error("But invalide, sortie...")
         sys.exit(1)
 
 if __name__ == "__main__":

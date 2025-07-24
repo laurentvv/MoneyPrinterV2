@@ -3,7 +3,7 @@ from termcolor import colored
 
 def print_banner() -> None:
     """
-    Prints the introductory ASCII Art Banner.
+    Affiche la bannière ASCII d'introduction.
 
     Returns:
         None

@@ -14,32 +14,32 @@ from config import *
 
 class Outreach:
     """
-    Class that houses the methods to reach out to businesses.
+    Classe qui héberge les méthodes pour contacter les entreprises.
     """
     def __init__(self) -> None:
         """
-        Constructor for the Outreach class.
+        Constructeur de la classe Outreach.
 
         Returns:
             None
         """
-        # Check if go is installed
+        # Vérifier si go est installé
         self.go_installed = os.system("go version") == 0
 
-        # Set niche
+        # Définir la niche
         self.niche = get_google_maps_scraper_niche()
 
-        # Set email credentials
+        # Définir les informations d'identification de l'e-mail
         self.email_creds = get_email_credentials()
 
     def is_go_installed(self) -> bool:
         """
-        Check if go is installed.
+        Vérifie si go est installé.
 
         Returns:
-            bool: True if go is installed, False otherwise.
+            bool: True si go est installé, False sinon.
         """
-        # Check if go is installed
+        # Vérifier si go est installé
         try:
             subprocess.call("go version", shell=True)
             return True
@@ -48,17 +48,17 @@ class Outreach:
 
     def unzip_file(self, zip_link: str) -> None:
         """
-        Unzip the file.
+        Décompresse le fichier.
 
         Args:
-            zip_link (str): The link to the zip file.
+            zip_link (str): Le lien vers le fichier zip.
 
         Returns:
             None
         """
-        # Check if the scraper is already unzipped, if not, unzip it
+        # Vérifier si le scraper est déjà décompressé, sinon, le décompresser
         if os.path.exists("google-maps-scraper-0.9.7"):
-            info("=> Scraper already unzipped. Skipping unzip.")
+            info("=> Scraper déjà décompressé. Saut de la décompression.")
             return
 
         r = requests.get(zip_link)
@@ -67,14 +67,14 @@ class Outreach:
 
     def build_scraper(self) -> None:
         """
-        Build the scraper.
+        Construit le scraper.
 
         Returns:
             None
         """
-        # Check if the scraper is already built, if not, build it
+        # Vérifier si le scraper est déjà construit, sinon, le construire
         if os.path.exists("google-maps-scraper.exe"):
-            print(colored("=> Scraper already built. Skipping build.", "blue"))
+            print(colored("=> Scraper déjà construit. Saut de la construction.", "blue"))
             return
 
         os.chdir("google-maps-scraper-0.9.7")
@@ -85,76 +85,77 @@ class Outreach:
 
     def run_scraper_with_args_for_30_seconds(self, args: str, timeout = 300) -> None:
         """
-        Run the scraper with the specified arguments for 30 seconds.
+        Exécute le scraper avec les arguments spécifiés pendant 30 secondes.
 
         Args:
-            args (str): The arguments to run the scraper with.
-            timeout (int): The time to run the scraper for.
+            args (str): Les arguments avec lesquels exécuter le scraper.
+            timeout (int): Le temps d'exécution du scraper.
 
         Returns:
             None
         """
-        # Run the scraper with the specified arguments
-        info(" => Running scraper...")
+        # Exécuter le scraper avec les arguments spécifiés
+        info(" => Exécution du scraper...")
         command = "google-maps-scraper " + args
         try:
             scraper_process = subprocess.call(command.split(" "), shell=True, timeout=float(timeout))
 
             if scraper_process == 0:
                 subprocess.call("taskkill /f /im google-maps-scraper.exe", shell=True)
-                print(colored("=> Scraper finished successfully.", "green"))
+                print(colored("=> Le scraper s'est terminé avec succès.", "green"))
             else:
                 subprocess.call("taskkill /f /im google-maps-scraper.exe", shell=True)
-                print(colored("=> Scraper finished with an error.", "red"))
+                print(colored("=> Le scraper s'est terminé avec une erreur.", "red"))
             
         except Exception as e:
             subprocess.call("taskkill /f /im google-maps-scraper.exe", shell=True)
-            print(colored("An error occurred while running the scraper:", "red"))
+            print(colored("Une erreur s'est produite lors de l'exécution du scraper:", "red"))
             print(str(e))
 
     def get_items_from_file(self, file_name: str) -> list:
         """
-        Read and return items from a file.
+        Lit et retourne les éléments d'un fichier.
 
         Args:
-            file_name (str): The name of the file to read from.
+            file_name (str): Le nom du fichier à lire.
 
         Returns:
-            list: The items from the file.
+            list: Les éléments du fichier.
         """
-        # Read and return items from a file
+        # Lire et retourner les éléments d'un fichier
         with open(file_name, "r", errors="ignore") as f:
             items = f.readlines()
             items = [item.strip() for item in items[1:]]
             return items
         
     def set_email_for_website(self, index: int, website: str, output_file: str):
-        """Extracts an email address from a website and updates a CSV file with it.
+        """Extrait une adresse e-mail d'un site web et met à jour un fichier CSV avec celle-ci.
 
-    This method sends a GET request to the specified website, searches for the
-    first email address in the HTML content, and appends it to the specified 
-    row in a CSV file. If no email address is found, no changes are made to 
-    the CSV file.
+        Cette méthode envoie une requête GET au site web spécifié, recherche la
+        première adresse e-mail dans le contenu HTML et l'ajoute à la ligne spécifiée
+        dans un fichier CSV. Si aucune adresse e-mail n'est trouvée, aucune modification n'est apportée au
+        fichier CSV.
 
-    Args:
-        index (int): The row index in the CSV file where the email should be appended.
-        website (str): The URL of the website to extract the email address from.
-        output_file (str): The path to the CSV file to update with the extracted email."""
-        # Extract and set an email for a website
+        Args:
+            index (int): L'index de la ligne dans le fichier CSV où l'e-mail doit être ajouté.
+            website (str): L'URL du site web d'où extraire l'adresse e-mail.
+            output_file (str): Le chemin vers le fichier CSV à mettre à jour avec l'e-mail extrait.
+        """
+        # Extraire et définir un e-mail pour un site web
         email = ""
 
         r = requests.get(website)
         if r.status_code == 200:
-            # Define a regular expression pattern to match email addresses
+            # Définir une expression régulière pour correspondre aux adresses e-mail
             email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
 
-            # Find all email addresses in the HTML string
+            # Trouver toutes les adresses e-mail dans la chaîne HTML
             email_addresses = re.findall(email_pattern, r.text)
 
             email = email_addresses[0] if len(email_addresses) > 0 else ""
 
         if email:
-            print(f"=> Setting email {email} for website {website}")
+            print(f"=> Définition de l'e-mail {email} pour le site web {website}")
             with open(output_file, "r", newline="", errors="ignore") as csvfile:
                 csvreader = csv.reader(csvfile)
                 items = list(csvreader)
@@ -166,23 +167,23 @@ class Outreach:
         
     def start(self) -> None:
         """
-        Start the outreach process.
+        Démarre le processus de prospection.
 
         Returns:
             None
         """
-        # Check if go is installed
+        # Vérifier si go est installé
         if not self.is_go_installed():
-            error("Go is not installed. Please install go and try again.")
+            error("Go n'est pas installé. Veuillez installer go et réessayer.")
             return
 
-        # Unzip the scraper
+        # Décompresser le scraper
         self.unzip_file(get_google_maps_scraper_zip_url())
 
-        # Build the scraper
+        # Construire le scraper
         self.build_scraper()
 
-        # Write the niche to a file
+        # Écrire la niche dans un fichier
         with open("niche.txt", "w") as f:
             f.write(self.niche)
 
@@ -190,25 +191,25 @@ class Outreach:
         message_subject = get_outreach_message_subject()
         message_body = get_outreach_message_body_file()
 
-        # Run
+        # Exécuter
         self.run_scraper_with_args_for_30_seconds(f"-input niche.txt -results \"{output_path}\"", timeout=get_scraper_timeout())
 
-        # Get the items from the file
+        # Obtenir les éléments du fichier
         items = self.get_items_from_file(output_path)
-        success(f" => Scraped {len(items)} items.")
+        success(f" => {len(items)} éléments scrapés.")
 
-        # Remove the niche file
+        # Supprimer le fichier de niche
         os.remove("niche.txt")
 
         time.sleep(2)
 
-        # Create a yagmail SMTP client outside the loop
+        # Créer un client SMTP yagmail en dehors de la boucle
         yag = yagmail.SMTP(user=self.email_creds["username"], password=self.email_creds["password"], host=self.email_creds["smtp_server"], port=self.email_creds["smtp_port"])
 
-        # Get the email for each business
+        # Obtenir l'e-mail pour chaque entreprise
         for item in items:
             try:
-                # Check if the item"s website is valid
+                # Vérifier si le site web de l'élément est valide
                 website = item.split(",")
                 website = [w for w in website if w.startswith("http")]
                 website = website[0] if len(website) > 0 else ""
@@ -217,17 +218,17 @@ class Outreach:
                     if test_r.status_code == 200:
                         self.set_email_for_website(items.index(item), website, output_path)
                         
-                        # Send emails using the existing SMTP connection
+                        # Envoyer des e-mails en utilisant la connexion SMTP existante
                         receiver_email = item.split(",")[-1]
 
                         if "@" not in receiver_email:
-                            warning(f" => No email provided. Skipping...")
+                            warning(f" => Aucun e-mail fourni. Saut...")
                             continue
 
                         subject = message_subject.replace("{{COMPANY_NAME}}", item[0])
                         body = open(message_body, "r").read().replace("{{COMPANY_NAME}}", item[0])
 
-                        info(f" => Sending email to {receiver_email}...")
+                        info(f" => Envoi de l'e-mail à {receiver_email}...")
                         
                         yag.send(
                             to=receiver_email,
@@ -235,9 +236,9 @@ class Outreach:
                             contents=body,
                         )
 
-                        success(f" => Sent email to {receiver_email}")
+                        success(f" => E-mail envoyé à {receiver_email}")
                     else:
-                        warning(f" => Website {website} is invalid. Skipping...")
+                        warning(f" => Le site web {website} est invalide. Saut...")
             except Exception as err:
-                error(f" => Error: {err}...")
+                error(f" => Erreur: {err}...")
                 continue

@@ -1,28 +1,28 @@
 # Configuration
 
-All your configurations will be in a file in the root directory, called `config.json`, which is a copy of `config.example.json`. You can change the values in `config.json` to your liking.
+Toutes vos configurations se trouveront dans un fichier dans le répertoire racine, appelé `config.json`, qui est une copie de `config.example.json`. Vous pouvez modifier les valeurs dans `config.json` à votre guise.
 
-## Values
+## Valeurs
 
-- `verbose`: `boolean` - If `true`, the application will print out more information.
-- `firefox_profile`: `string` - The path to your Firefox profile. This is used to use your Social Media Accounts without having to log in every time you run the application.
-- `headless`: `boolean` - If `true`, the application will run in headless mode. This means that the browser will not be visible.
-- `llm`: This will decide the Large Language Model MPV2 uses to generate tweets, scripts, image prompts and more. If left empty, the default model (`gpt35_turbo`) will be used. Here are your choices:
+- `verbose`: `boolean` - Si `true`, l'application affichera plus d'informations.
+- `firefox_profile`: `string` - Le chemin vers votre profil Firefox. Ceci est utilisé pour utiliser vos comptes de médias sociaux sans avoir à vous connecter à chaque fois que vous exécutez l'application.
+- `headless`: `boolean` - Si `true`, l'application s'exécutera en mode headless. Cela signifie que le navigateur ne sera pas visible.
+- `llm`: Ceci décidera du Grand Modèle de Langage que MPV2 utilise pour générer des tweets, des scripts, des invites d'image et plus encore. Si laissé vide, le modèle par défaut (`gpt35_turbo`) sera utilisé. Voici vos choix :
     * `gpt4`
     * `gpt35_turbo`
     * `llama2_7b`
     * `llama2_13b`
     * `llama2_70b`
     * `mixtral_8x7b`
-- `image_prompt_llm`: `string` - The Large Language Model that will be used to generate image prompts. If left empty, the default model (`gpt35_turbo`) will be used. Here are your choices:
+- `image_prompt_llm`: `string` - Le Grand Modèle de Langage qui sera utilisé pour générer des invites d'image. Si laissé vide, le modèle par défaut (`gpt35_turbo`) sera utilisé. Voici vos choix :
     * `gpt4`
     * `gpt35_turbo`
     * `llama2_7b`
     * `llama2_13b`
     * `llama2_70b`
     * `mixtral_8x7b`
-- `twitter_language`: `string` - The language that will be used to generate & post tweets.
-- `image_model`: `string` - What AI Model you want to use to generate images, here are your choices:
+- `twitter_language`: `string` - La langue qui sera utilisée pour générer et poster des tweets.
+- `image_model`: `string` - Quel modèle d'IA vous voulez utiliser pour générer des images, voici vos choix :
     * `v1`
     * `v2`
     * `v3` (DALL-E)
@@ -32,24 +32,24 @@ All your configurations will be in a file in the root directory, called `config.
     * `animefy`
     * `raava`
     * `shonin`
-- `threads`: `number` - The amount of threads that will be used to execute operations, e.g. writing to a file using MoviePy.
-- `is_for_kids`: `boolean` - If `true`, the application will upload the video to YouTube Shorts as a video for kids.
-- `google_maps_scraper`: `string` - The URL to the Google Maps scraper. This will be used to scrape Google Maps for local businesses. It is recommended to use the default value.
-- `zip_url`: `string` - The URL to the ZIP file that contains the to be used Songs for the YouTube Shorts Automater.
+- `threads`: `number` - Le nombre de threads qui seront utilisés pour exécuter des opérations, par exemple, écrire dans un fichier en utilisant MoviePy.
+- `is_for_kids`: `boolean` - Si `true`, l'application téléchargera la vidéo sur YouTube Shorts comme une vidéo pour les enfants.
+- `google_maps_scraper`: `string` - L'URL du scraper de Google Maps. Ceci sera utilisé pour scraper Google Maps pour les entreprises locales. Il est recommandé d'utiliser la valeur par défaut.
+- `zip_url`: `string` - L'URL du fichier ZIP qui contient les chansons à utiliser pour l'Automateur de YouTube Shorts.
 - `email`: `object`:
-    - `smtp_server`: `string` - Your SMTP server.
-    - `smtp_port`: `number` - The port of your SMTP server.
-    - `username`: `string` - Your email address.
-    - `password`: `string` - Your email password.
-- `google_maps_scraper_niche`: `string` - The niche you want to scrape Google Maps for.
-- `scraper_timeout`: `number` - The timeout for the Google Maps scraper.
-- `outreach_message_subject`: `string` - The subject of your outreach message. `{{COMPANY_NAME}}` will be replaced with the company name.
-- `outreach_message_body_file`: `string` - The file that contains the body of your outreach message, should be HTML. `{{COMPANY_NAME}}` will be replaced with the company name.
-- `assembly_ai_api_key`: `string` - Your Assembly AI API key. Get yours from [here](https://www.assemblyai.com/app/).
-- `font`: `string` - The font that will be used to generate images. This should be a `.ttf` file in the `fonts/` directory.
-- `imagemagick_path`: `string` - The path to the ImageMagick binary. This is used by MoviePy to manipulate images. Install ImageMagick from [here](https://imagemagick.org/script/download.php) and set the path to the `magick.exe` on Windows, or on Linux/MacOS the path to `convert` (usually /usr/bin/convert).
+    - `smtp_server`: `string` - Votre serveur SMTP.
+    - `smtp_port`: `number` - Le port de votre serveur SMTP.
+    - `username`: `string` - Votre adresse e-mail.
+    - `password`: `string` - Votre mot de passe e-mail.
+- `google_maps_scraper_niche`: `string` - La niche que vous voulez scraper sur Google Maps.
+- `scraper_timeout`: `number` - Le timeout pour le scraper de Google Maps.
+- `outreach_message_subject`: `string` - Le sujet de votre message de prospection. `{{COMPANY_NAME}}` sera remplacé par le nom de l'entreprise.
+- `outreach_message_body_file`: `string` - Le fichier qui contient le corps de votre message de prospection, devrait être en HTML. `{{COMPANY_NAME}}` sera remplacé par le nom de l'entreprise.
+- `assembly_ai_api_key`: `string` - Votre clé API Assembly AI. Obtenez la vôtre [ici](https://www.assemblyai.com/app/).
+- `font`: `string` - La police qui sera utilisée pour générer des images. Ce devrait être un fichier `.ttf` dans le répertoire `fonts/`.
+- `imagemagick_path`: `string` - Le chemin vers le binaire ImageMagick. Ceci est utilisé par MoviePy pour manipuler des images. Installez ImageMagick depuis [ici](https://imagemagick.org/script/download.php) et définissez le chemin vers le `magick.exe` sous Windows, ou sous Linux/MacOS le chemin vers `convert` (généralement /usr/bin/convert).
 
-## Example
+## Exemple
 
 ```json
 {
